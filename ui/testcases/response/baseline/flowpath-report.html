@@ -1,0 +1,1874 @@
+<!--
+  Name   : FlowPathCompReport.jsp
+  Purpose: To show Flowpath Component Instance Report.
+ -->
+<!--  
+  Name   : header.jspf
+  Author : Neeraj
+  Purpose: This is for Analyze GUI. It it to be included in all JSP
+           on the top for for following :
+           - Import of packages 
+           - Initialization of beans and js
+           - JSP variables which are common to all JSPs
+  Notes  :
+    None
+  Modification History:
+    5/30/05:Neeraj:1.2.2 - Initial Version
+    09/03/05:Neeraj:1.4 - Move global variables and added PDF/Excel/Chart Beans
+
+-->
+<!-- This is required for firefox b'coz it does not refresh the screen.when we select the option then click on another tab or OK button after again open the same screen . It does not show the changed value means it takes value from the cache.when we reload the screen then it gives new value. -->
+<a0:html xmlns:a0="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" xmlns="http?://www.w3.org/1999/xhtml"><a0:head><a0:script src="/netstorm/js/sortableTable.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/js/validation.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/js/prototype.js" type="text/javascript"></a0:script>
+<a0:script src="/netstorm/js/fastinit.js" type="text/javascript"></a0:script>
+<a0:script src="/netstorm/js/tablekit.js" type="text/javascript"></a0:script>
+
+
+<a0:script src="/netstorm/js/nsStringUtils.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/js/nsDateUtils.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/js/nsUtils.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/js/tableEnhancement.js" language="javascript"></a0:script>
+
+<a0:script src="/netstorm/js/help.js" language="javascript"></a0:script>
+
+<a0:script src="/netstorm/analyze/interchange.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/analyze/rptUtils.js" language="javascript"></a0:script>
+
+<!-- Combo-handled YUI JS files: -->
+<!--<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.2r1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+
+
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?&2.8.2r1/build/container/container_core-min.js"></script>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.2r1/build/menu/menu-min.js"></script>-->
+
+<a0:script src="/netstorm/yui/js/yahoo-dom-event.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/yui/js/container_core-min.js" language="javascript"></a0:script>
+<a0:script src="/netstorm/yui/js/menu-min.js" language="javascript"></a0:script>
+
+<a0:script src="drillDownBreadCrumbs.js" language="javascript"></a0:script>
+
+
+
+
+
+
+
+
+  
+ 
+
+
+
+<!--All global JS variable (used in more than one JSP file) need to be declared here -->
+<a0:script language="javascript">
+
+testMode = 'W' 
+var guiMode = 'NS';
+
+var arrBreadCrumbUrl = new Array();
+var c_Index = -1;
+var flagPagination = 0;
+var flagDataBaseSort = 1;
+var flagCSV = 1;
+var currPath = '/netstorm/';
+var queryFailStatus = 0;
+var tooltipStatus = "Click to sort on ";
+var timeFormatToolTip = " in HH:MM:SS.ms format.";
+var dayTimeFormatToolTip = "in (MM/dd/yy hh:mm:ss) format.";
+//Call of the TableKit init method after all resources are loaded of a page.
+  //TableKit.register("testRunsTableID",Object.extend(TableKit.options.resizable || {},{sortable:true}));
+   setTimeout(function(){if(document.getElementById("testRunsTableID") != "undefined" &amp;&amp; document.getElementById("testRunsTableID") != null)TableKit.Resizable.init(testRunsTableID);}, 500);
+</a0:script>
+
+
+<a0:script language="javascript">
+
+var nextImg = new Image();
+nextImg.src = "/netstorm/images/arrow_next.png";
+var prevImg = new Image();
+prevImg.src = "/netstorm/images/arrow_prev.png";
+var nextDisableImg = new Image();
+nextDisableImg.src = "/netstorm/images/arrow_next_disable.png";
+var prevDisableImg = new Image();
+prevDisableImg.src = "/netstorm/images/arrow_prev_disable.png";
+
+flagPagination = 1;
+var varFilterCriteria = "";
+var arrDataValues = new Array();
+var arrDataValues2 = new Array();
+
+varFilterCriteria = 'URL Status = All'
+
+
+    
+
+
+  
+    
+
+    arrBreadCrumbUrl[0] = 'FlowPath ReportBREADCRUMB_SEPARATEhttp://192.168.1.95/netstorm/analyze/drill_down_queries/FlowPathCompReport.jsp?testRun=5145&amp;breadCrumbTrackID=0'
+c_Index = '0'
+
+
+  
+      arrDataValues[0] = new Array(14);
+    arrDataValues[0][0] = 'Tier Name'
+arrDataValues[0][1] = 'Tierid'
+arrDataValues[0][2] = 'Server Name'
+arrDataValues[0][3] = 'Serverid'
+arrDataValues[0][4] = 'App Name'
+arrDataValues[0][5] = 'Appid'
+arrDataValues[0][6] = 'URL'
+arrDataValues[0][7] = 'URL Index'
+arrDataValues[0][8] = 'FlowPath Instance'
+arrDataValues[0][9] = 'Start Time'
+arrDataValues[0][10] = 'FlowPath Duration'
+arrDataValues[0][11] = 'Method Count'
+arrDataValues[0][12] = 'URL Query Parmeter'
+arrDataValues[0][13] = 'Status Code'
+
+      arrDataValues[1] = new Array(14);
+    arrDataValues[1][0] = 'WLTier96'
+arrDataValues[1][1] = '0'
+arrDataValues[1][2] = '192.168.255.2'
+arrDataValues[1][3] = '0'
+arrDataValues[1][4] = 'atg-96'
+arrDataValues[1][5] = '1'
+arrDataValues[1][6] = '/crs/storeus/cart/cart.jsp'
+arrDataValues[1][7] = '1'
+arrDataValues[1][8] = '284223826495238'
+arrDataValues[1][9] = '05/05/14 12:11:34'
+arrDataValues[1][10] = '00:00:01.927'
+arrDataValues[1][11] = '1'
+arrDataValues[1][12] = '-'
+arrDataValues[1][13] = '0'
+
+      arrDataValues[2] = new Array(14);
+    arrDataValues[2][0] = 'WLTier96'
+arrDataValues[2][1] = '0'
+arrDataValues[2][2] = '192.168.255.2'
+arrDataValues[2][3] = '0'
+arrDataValues[2][4] = 'atg-96'
+arrDataValues[2][5] = '1'
+arrDataValues[2][6] = '/crs/'
+arrDataValues[2][7] = '2'
+arrDataValues[2][8] = '284223825832705'
+arrDataValues[2][9] = '05/05/14 12:11:31'
+arrDataValues[2][10] = '00:00:01.686'
+arrDataValues[2][11] = '1'
+arrDataValues[2][12] = '-'
+arrDataValues[2][13] = '0'
+
+      arrDataValues[3] = new Array(14);
+    arrDataValues[3][0] = 'WLTier96'
+arrDataValues[3][1] = '0'
+arrDataValues[3][2] = '192.168.255.2'
+arrDataValues[3][3] = '0'
+arrDataValues[3][4] = 'atg-96'
+arrDataValues[3][5] = '1'
+arrDataValues[3][6] = '/crs/storeus/cart/cart.jsp'
+arrDataValues[3][7] = '1'
+arrDataValues[3][8] = '2748849784582'
+arrDataValues[3][9] = '05/05/14 12:11:34'
+arrDataValues[3][10] = '00:00:01.039'
+arrDataValues[3][11] = '5002'
+arrDataValues[3][12] = '-'
+arrDataValues[3][13] = '0'
+
+      arrDataValues[4] = new Array(14);
+    arrDataValues[4][0] = 'WLTier96'
+arrDataValues[4][1] = '0'
+arrDataValues[4][2] = '192.168.255.2'
+arrDataValues[4][3] = '0'
+arrDataValues[4][4] = 'atg-96'
+arrDataValues[4][5] = '1'
+arrDataValues[4][6] = '/crs/'
+arrDataValues[4][7] = '2'
+arrDataValues[4][8] = '2748847924993'
+arrDataValues[4][9] = '05/05/14 12:11:26'
+arrDataValues[4][10] = '00:00:00.745'
+arrDataValues[4][11] = '5002'
+arrDataValues[4][12] = '-'
+arrDataValues[4][13] = '0'
+
+      arrDataValues[5] = new Array(14);
+    arrDataValues[5][0] = 'WLTier96'
+arrDataValues[5][1] = '0'
+arrDataValues[5][2] = '192.168.255.2'
+arrDataValues[5][3] = '0'
+arrDataValues[5][4] = 'atg-96'
+arrDataValues[5][5] = '1'
+arrDataValues[5][6] = '/crs/browse/category.jsp'
+arrDataValues[5][7] = '3'
+arrDataValues[5][8] = '2748849565442'
+arrDataValues[5][9] = '05/05/14 12:11:33'
+arrDataValues[5][10] = '00:00:00.275'
+arrDataValues[5][11] = '1'
+arrDataValues[5][12] = '-'
+arrDataValues[5][13] = '0'
+
+      arrDataValues[6] = new Array(14);
+    arrDataValues[6][0] = 'WLTier96'
+arrDataValues[6][1] = '0'
+arrDataValues[6][2] = '192.168.255.2'
+arrDataValues[6][3] = '0'
+arrDataValues[6][4] = 'atg-96'
+arrDataValues[6][5] = '1'
+arrDataValues[6][6] = '/crs/browse/category.jsp'
+arrDataValues[6][7] = '3'
+arrDataValues[6][8] = '284223826276098'
+arrDataValues[6][9] = '05/05/14 12:11:33'
+arrDataValues[6][10] = '00:00:00.274'
+arrDataValues[6][11] = '1'
+arrDataValues[6][12] = '-'
+arrDataValues[6][13] = '0'
+
+      arrDataValues[7] = new Array(14);
+    arrDataValues[7][0] = 'WLTier96'
+arrDataValues[7][1] = '0'
+arrDataValues[7][2] = '192.168.255.2'
+arrDataValues[7][3] = '0'
+arrDataValues[7][4] = 'atg-96'
+arrDataValues[7][5] = '1'
+arrDataValues[7][6] = '/crs/storeus/browse/productDetailColorSizePicker.jsp'
+arrDataValues[7][7] = '5'
+arrDataValues[7][8] = '284223826385668'
+arrDataValues[7][9] = '05/05/14 12:11:33'
+arrDataValues[7][10] = '00:00:00.244'
+arrDataValues[7][11] = '656'
+arrDataValues[7][12] = '-'
+arrDataValues[7][13] = '0'
+
+      arrDataValues[8] = new Array(14);
+    arrDataValues[8][0] = 'WLTier96'
+arrDataValues[8][1] = '0'
+arrDataValues[8][2] = '192.168.255.2'
+arrDataValues[8][3] = '0'
+arrDataValues[8][4] = 'atg-96'
+arrDataValues[8][5] = '1'
+arrDataValues[8][6] = '/crs/storeus/browse/productDetailColorSizePicker.jsp'
+arrDataValues[8][7] = '5'
+arrDataValues[8][8] = '2748849673988'
+arrDataValues[8][9] = '05/05/14 12:11:33'
+arrDataValues[8][10] = '00:00:00.243'
+arrDataValues[8][11] = '1'
+arrDataValues[8][12] = '-'
+arrDataValues[8][13] = '0'
+
+      arrDataValues[9] = new Array(14);
+    arrDataValues[9][0] = 'WLTier96'
+arrDataValues[9][1] = '0'
+arrDataValues[9][2] = '192.168.255.2'
+arrDataValues[9][3] = '0'
+arrDataValues[9][4] = 'atg-96'
+arrDataValues[9][5] = '1'
+arrDataValues[9][6] = '/crs/'
+arrDataValues[9][7] = '2'
+arrDataValues[9][8] = '3098973883201491'
+arrDataValues[9][9] = '05/05/14 12:30:25'
+arrDataValues[9][10] = '00:00:00.185'
+arrDataValues[9][11] = '335'
+arrDataValues[9][12] = '-'
+arrDataValues[9][13] = '0'
+
+      arrDataValues[10] = new Array(14);
+    arrDataValues[10][0] = 'WLTier96'
+arrDataValues[10][1] = '0'
+arrDataValues[10][2] = '192.168.255.2'
+arrDataValues[10][3] = '0'
+arrDataValues[10][4] = 'atg-96'
+arrDataValues[10][5] = '1'
+arrDataValues[10][6] = '/crs/'
+arrDataValues[10][7] = '2'
+arrDataValues[10][8] = '2536023879660034'
+arrDataValues[10][9] = '05/05/14 12:27:09'
+arrDataValues[10][10] = '00:00:00.180'
+arrDataValues[10][11] = '335'
+arrDataValues[10][12] = '-'
+arrDataValues[10][13] = '0'
+
+      arrDataValues[11] = new Array(14);
+    arrDataValues[11][0] = 'WLTier96'
+arrDataValues[11][1] = '0'
+arrDataValues[11][2] = '192.168.255.2'
+arrDataValues[11][3] = '0'
+arrDataValues[11][4] = 'atg-96'
+arrDataValues[11][5] = '1'
+arrDataValues[11][6] = '/crs/'
+arrDataValues[11][7] = '2'
+arrDataValues[11][8] = '2817498906566895'
+arrDataValues[11][9] = '05/05/14 12:30:25'
+arrDataValues[11][10] = '00:00:00.177'
+arrDataValues[11][11] = '1'
+arrDataValues[11][12] = '-'
+arrDataValues[11][13] = '0'
+
+      arrDataValues[12] = new Array(14);
+    arrDataValues[12][0] = 'WLTier96'
+arrDataValues[12][1] = '0'
+arrDataValues[12][2] = '192.168.255.2'
+arrDataValues[12][3] = '0'
+arrDataValues[12][4] = 'atg-96'
+arrDataValues[12][5] = '1'
+arrDataValues[12][6] = '/crs/'
+arrDataValues[12][7] = '2'
+arrDataValues[12][8] = '2749077344491'
+arrDataValues[12][9] = '05/05/14 12:26:22'
+arrDataValues[12][10] = '00:00:00.173'
+arrDataValues[12][11] = '1'
+arrDataValues[12][12] = '-'
+arrDataValues[12][13] = '0'
+
+      arrDataValues[13] = new Array(14);
+    arrDataValues[13][0] = 'WLTier96'
+arrDataValues[13][1] = '0'
+arrDataValues[13][2] = '192.168.255.2'
+arrDataValues[13][3] = '0'
+arrDataValues[13][4] = 'atg-96'
+arrDataValues[13][5] = '1'
+arrDataValues[13][6] = '/crs/storeus/browse/productDetailColorSizePicker.jsp'
+arrDataValues[13][7] = '5'
+arrDataValues[13][8] = '565699061988051'
+arrDataValues[13][9] = '05/05/14 12:28:24'
+arrDataValues[13][10] = '00:00:00.170'
+arrDataValues[13][11] = '284'
+arrDataValues[13][12] = '-'
+arrDataValues[13][13] = '0'
+
+      arrDataValues[14] = new Array(14);
+    arrDataValues[14][0] = 'WLTier96'
+arrDataValues[14][1] = '0'
+arrDataValues[14][2] = '192.168.255.2'
+arrDataValues[14][3] = '0'
+arrDataValues[14][4] = 'atg-96'
+arrDataValues[14][5] = '1'
+arrDataValues[14][6] = '/crs/'
+arrDataValues[14][7] = '2'
+arrDataValues[14][8] = '2817498780524394'
+arrDataValues[14][9] = '05/05/14 12:22:13'
+arrDataValues[14][10] = '00:00:00.167'
+arrDataValues[14][11] = '1'
+arrDataValues[14][12] = '-'
+arrDataValues[14][13] = '0'
+
+      arrDataValues[15] = new Array(14);
+    arrDataValues[15][0] = 'WLTier96'
+arrDataValues[15][1] = '0'
+arrDataValues[15][2] = '192.168.255.2'
+arrDataValues[15][3] = '0'
+arrDataValues[15][4] = 'atg-96'
+arrDataValues[15][5] = '1'
+arrDataValues[15][6] = '/crs/'
+arrDataValues[15][7] = '2'
+arrDataValues[15][8] = '284224054029782'
+arrDataValues[15][9] = '05/05/14 12:26:22'
+arrDataValues[15][10] = '00:00:00.167'
+arrDataValues[15][11] = '335'
+arrDataValues[15][12] = '-'
+arrDataValues[15][13] = '0'
+
+      arrDataValues[16] = new Array(14);
+    arrDataValues[16][0] = 'WLTier96'
+arrDataValues[16][1] = '0'
+arrDataValues[16][2] = '192.168.255.2'
+arrDataValues[16][3] = '0'
+arrDataValues[16][4] = 'atg-96'
+arrDataValues[16][5] = '1'
+arrDataValues[16][6] = '/crs/'
+arrDataValues[16][7] = '2'
+arrDataValues[16][8] = '3943398748264614'
+arrDataValues[16][9] = '05/05/14 12:26:11'
+arrDataValues[16][10] = '00:00:00.167'
+arrDataValues[16][11] = '335'
+arrDataValues[16][12] = '-'
+arrDataValues[16][13] = '0'
+
+      arrDataValues[17] = new Array(14);
+    arrDataValues[17][0] = 'WLTier96'
+arrDataValues[17][1] = '0'
+arrDataValues[17][2] = '192.168.255.2'
+arrDataValues[17][3] = '0'
+arrDataValues[17][4] = 'atg-96'
+arrDataValues[17][5] = '1'
+arrDataValues[17][6] = '/crs/'
+arrDataValues[17][7] = '2'
+arrDataValues[17][8] = '847174056716236'
+arrDataValues[17][9] = '05/05/14 12:29:35'
+arrDataValues[17][10] = '00:00:00.166'
+arrDataValues[17][11] = '1'
+arrDataValues[17][12] = '-'
+arrDataValues[17][13] = '0'
+
+      arrDataValues[18] = new Array(14);
+    arrDataValues[18][0] = 'WLTier96'
+arrDataValues[18][1] = '0'
+arrDataValues[18][2] = '192.168.255.2'
+arrDataValues[18][3] = '0'
+arrDataValues[18][4] = 'atg-96'
+arrDataValues[18][5] = '1'
+arrDataValues[18][6] = '/crs/'
+arrDataValues[18][7] = '2'
+arrDataValues[18][8] = '3943398748237732'
+arrDataValues[18][9] = '05/05/14 12:26:11'
+arrDataValues[18][10] = '00:00:00.166'
+arrDataValues[18][11] = '335'
+arrDataValues[18][12] = '-'
+arrDataValues[18][13] = '0'
+
+      arrDataValues[19] = new Array(14);
+    arrDataValues[19][0] = 'WLTier96'
+arrDataValues[19][1] = '0'
+arrDataValues[19][2] = '192.168.255.2'
+arrDataValues[19][3] = '0'
+arrDataValues[19][4] = 'atg-96'
+arrDataValues[19][5] = '1'
+arrDataValues[19][6] = '/crs/storeus/cart/cart.jsp'
+arrDataValues[19][7] = '1'
+arrDataValues[19][8] = '4224873740411266'
+arrDataValues[19][9] = '05/05/14 12:27:11'
+arrDataValues[19][10] = '00:00:00.165'
+arrDataValues[19][11] = '249'
+arrDataValues[19][12] = '-'
+arrDataValues[19][13] = '0'
+
+      arrDataValues[20] = new Array(14);
+    arrDataValues[20][0] = 'WLTier96'
+arrDataValues[20][1] = '0'
+arrDataValues[20][2] = '192.168.255.2'
+arrDataValues[20][3] = '0'
+arrDataValues[20][4] = 'atg-96'
+arrDataValues[20][5] = '1'
+arrDataValues[20][6] = '/crs/'
+arrDataValues[20][7] = '2'
+arrDataValues[20][8] = '1691598952745856'
+arrDataValues[20][9] = '05/05/14 12:27:22'
+arrDataValues[20][10] = '00:00:00.165'
+arrDataValues[20][11] = '1'
+arrDataValues[20][12] = '-'
+arrDataValues[20][13] = '0'
+
+      arrDataValues[21] = new Array(14);
+    arrDataValues[21][0] = 'WLTier96'
+arrDataValues[21][1] = '0'
+arrDataValues[21][2] = '192.168.255.2'
+arrDataValues[21][3] = '0'
+arrDataValues[21][4] = 'atg-96'
+arrDataValues[21][5] = '1'
+arrDataValues[21][6] = '/crs/storeus/browse/productDetailColorSizePicker.jsp'
+arrDataValues[21][7] = '5'
+arrDataValues[21][8] = '4224873790099314'
+arrDataValues[21][9] = '05/05/14 12:30:25'
+arrDataValues[21][10] = '00:00:00.165'
+arrDataValues[21][11] = '284'
+arrDataValues[21][12] = '-'
+arrDataValues[21][13] = '0'
+
+      arrDataValues[22] = new Array(14);
+    arrDataValues[22][0] = 'WLTier96'
+arrDataValues[22][1] = '0'
+arrDataValues[22][2] = '192.168.255.2'
+arrDataValues[22][3] = '0'
+arrDataValues[22][4] = 'atg-96'
+arrDataValues[22][5] = '1'
+arrDataValues[22][6] = '/crs/'
+arrDataValues[22][7] = '2'
+arrDataValues[22][8] = '2749128452855'
+arrDataValues[22][9] = '05/05/14 12:29:42'
+arrDataValues[22][10] = '00:00:00.165'
+arrDataValues[22][11] = '335'
+arrDataValues[22][12] = '-'
+arrDataValues[22][13] = '0'
+
+
+var fpIndex = '8';
+var testRun = '5145';
+var tableColTypes = 'None,None,String,String,String,String,DecimalNum,DecimalNum,DecimalNum,String,DecimalNum';
+var size = 0;
+var pageIndex = 'NA';
+var pageName = 'NA';
+var userAccess = 'NA';
+var runPhase = '0';
+var testMode = 'W';
+var WAN_ENV = '';
+
+
+function onLoadFunction()
+{
+  if('' == "true")
+	alert("Sequence(s) added successfully in compare list.");
+
+  getLimitInList(document.frmMain.lstLimit, '22');
+  document.frmMain.lstLimit.value = '22';
+  enableDisableIMG();
+  showBreadCrumb();
+  if(window.top!=window.self)
+  {
+    window.top.location=  window.location;
+  }
+  sortIndicator();
+}
+
+function showBreadCrumb()
+{
+  createBreadCrumbLinks(document.getElementById("breadCrumbID"),c_Index);
+}
+
+// removing sort indicator from default column
+function removeSortIndicator()
+{
+  document.getElementById('0').style.display='none';
+}
+
+function sortIndicator()
+{
+  if('0' == "" || '0' == null )
+    return;
+  var varSortIndicatorArea = document.getElementById('0');
+  varSortIndicatorArea.innerHTML = "&lt;img src='/netstorm/images/downArrow.gif'/&gt;";
+  if('down' == "up")
+    varSortIndicatorArea.innerHTML = "&lt;img src='/netstorm/images/upArrow.gif'/&gt;";
+}
+
+function enableDisableIMG()
+{
+  var nextImg = new Image();
+  nextImg.src = "/netstorm/images/arrow_next.png";
+  var prevImg = new Image();
+  prevImg.src = "/netstorm/images/arrow_prev.png";
+
+  var nextDisableImg = new Image();
+  nextDisableImg.src = "/netstorm/images/arrow_next_disable.png";
+  var prevDisableImg = new Image();
+  prevDisableImg.src = "/netstorm/images/arrow_prev_disable.png";
+
+  objImgPrev = document.getElementById('spinner_Prev');
+  objImgNext = document.getElementById('spinner_Next');
+
+  //In case page have less record than list and open first time.
+  if((parseInt('0') == parseInt('1') &amp;&amp; parseInt('1') == parseInt('1')))
+  {
+    objImgNext.src = nextDisableImg.src;
+    objImgPrev.src = prevDisableImg.src;
+
+    if(parseInt('56483') &lt;= parseInt('22'))
+      document.frmMain.lstLimit.disabled = true;
+  }
+
+  //In case where record for next page does not exist.
+  else if(parseInt('0') == parseInt('1'))
+  {
+    //Means current page have no record
+    objImgNext.src = nextDisableImg.src;
+    objImgPrev.src = prevImg.src;
+    //submitJSP("reduce", document.frmMain.lstLimit.value+"_"+'0');
+  }
+
+  //In case where offSet is 1 and now can't move backward.
+  else if(parseInt('0') == parseInt('0'))
+  {
+    objImgNext.src = nextImg.src;
+    objImgPrev.src = prevDisableImg.src;
+  }
+
+  else
+  {
+    objImgNext.src = nextImg.src;
+    objImgPrev.src = prevImg.src;
+  }
+}
+
+function validateLimit()
+{
+  if(document.frmMain.lstLimit.value == "")
+    return false;
+}
+
+// Spinner for forward and Backward implemented By Richa Shastri.
+function changeValue(type)
+{
+  objImgPrev = document.getElementById('spinner_Prev');
+  objImgNext = document.getElementById('spinner_Next');
+
+  if((type == 'add') &amp;&amp; (objImgNext.src.indexOf('arrow_next.png')&gt;-1))
+  {
+    if(document.frmMain.lstLimit.value == "") //checking condition that first time load user clicked on forward spinner then set default limit as 25
+      submitJSP("spinner",25+"_"+(25 + parseInt('0')));
+    else
+      submitJSP("spinner",document.frmMain.lstLimit.value+"_"+(parseInt(document.frmMain.lstLimit.value) + parseInt('0')));
+
+    ProgressBarArea("Loading");
+  }
+
+  if((type == 'reduce') &amp;&amp; (objImgPrev.src.indexOf('arrow_prev.png')&gt;-1))
+  {
+
+    if(document.frmMain.lstLimit.value == "") //checking condition that first time load user clicked on backward spinner then set default limit as 25
+      submitJSP("spinner",25+"_"+(parseInt('0') - 25));
+    else
+      submitJSP("spinner", document.frmMain.lstLimit.value+"_"+(parseInt('0') - parseInt(document.frmMain.lstLimit.value)));
+
+    ProgressBarArea("Loading");
+  }
+}
+
+function changeValueOnSelect(type , item )
+{
+  if(type = 'itemSelect')
+  {
+    if(validateLimit() == false)
+    {
+      alert("Please enter limit");
+      return;
+    }
+
+    submitJSP("item", document.frmMain.lstLimit.value);
+    ProgressBarArea("Loading");
+  }
+}
+
+//if data is null the resizable will not be done
+function getTableLengthtStatus()
+{
+  return false;
+}
+
+function getWidthColumn(percent)
+{
+  var w=parseInt(window.screen.availWidth);
+  w=w*(.98);
+  var value=(w*percent)/100;
+  return value;
+}
+
+function getHeightTable()
+{
+  if(arrDataValues.length != 1)
+    return getHeight(.65);
+}
+
+function getHeight(value)
+{
+  return (parseInt(window.screen.availHeight) * value);
+}
+
+
+function showTableTitle()
+{
+  document.write("&lt;table border = 0 width = 95%  cellpadding='0' cellspacing='0'&gt;&lt;tr&gt;");
+  document.write("&lt;td width = 52% align = 'left' class='tableTitle'&gt;&lt;span id = 'breadCrumbID'&gt;&lt;/td&gt;&lt;/td&gt;&lt;td  width = 14% align = 'left'  class='tableTitle'&gt;Limit&amp;nbsp;&amp;nbsp;&lt;select name = lstLimit onchange= changeValueOnSelect('itemSelect',this.value); style='width:10%,height:2%' class = valueOfListBox&gt;&lt;/select&gt;&lt;/td&gt;");
+
+  document.write("&lt;td  width = 2% align = 'left' &gt;&amp;nbsp&amp;nbsp;&lt;img  id ='spinner_Prev' src='/netstorm/images/new_arrow_prev.png' onclick=changeValue('reduce'); /&gt;&lt;/td&gt;");
+
+  document.write("&lt;td  width = 3% align = 'left'&gt;&amp;nbsp&amp;nbsp;&amp;nbsp;&lt;img id = 'spinner_Next' src='/netstorm/images/new_arrow_next.png' onclick=changeValue('add'); /&gt;&lt;/td&gt;&lt;td width = 8% align = 'left' class='tableTitle'&gt;&amp;nbsp;&amp;nbsp;Page jjjjjjjjjjjj&amp;nbsp;&lt;/td&gt;&lt;td  width = 17% align = 'left'&gt;&lt;div id = 'ProgressBarArea'&gt;&lt;/div&gt;&lt;/td&gt;");
+
+  document.write("&lt;/tr&gt;&lt;/table&gt;");
+}
+
+function showPaginationOption()
+{
+  document.write("&lt;table width = 95%   cellpadding='0' cellspacing='0'&gt;&lt;tr&gt;");
+
+  document.write("&lt;td width = 55%  align = 'left' class = 'tableTitle'&gt;&lt;span id = 'breadCrumbID'&gt;");
+  document.write("&lt;/span&gt;&lt;/td&gt;");
+
+  document.write("&lt;/tr&gt;&lt;/table&gt;");
+}
+
+function openCount(signature,rowIndex)
+{
+    setFilters(rowIndex);
+    if(urlName.length &gt; 45)
+     urlName = encodeURIComponent(urlName.substring(0, 45)) + "...";
+
+    urlName = "&amp;urlname="+ urlName;
+
+    var temp = "&amp;urlIndex=" + urlIdx +
+    "&amp;appid=" + appid +
+    "&amp;serverid=" + serverid +
+    "&amp;tierid=" + tierid +
+
+    "&amp;generatorId="+generatorId+
+    "&amp;generatorName="+generatorName+
+
+    "&amp;appName=" + appName +
+    "&amp;serverName=" + serverName +
+    "&amp;tierName=" + tierName +
+
+    "&amp;pageIndex=" + pageIdx +
+    "&amp;transactionIndex=" + transactionIdx +
+    "&amp;sessionIndex=" + sessionIdx +
+    //"&amp;urlname="+ encodeURIComponent(urlName) +
+    "&amp;pageName=" + pageName +
+    "&amp;sessionName=" + sessionName +
+    "&amp;transactionName=" + transactionName +
+	"&amp;exceptionClassName=" + exceptionClassName +
+   "&amp;exceptionThrowingClassName=" + exceptionThrowingClassName +
+   "&amp;exceptionThrowingMethodName=" + replaceCharacters(exceptionThrowingMethodName) +
+   "&amp;exceptionMessage=" + exceptionMessage +
+    "&amp;userAccess=" + 'NA' +
+    "&amp;userLocation=" + 'NA' +
+    "&amp;userBrowserIndex=" + 'NA' +
+    "&amp;strStatus=" + '-2'+
+    "&amp;strAbsStartTime="+'NA' +
+    "&amp;threadId="+'NA' +
+    "&amp;strDuration="+'NA';
+
+    var option =  "";
+    if('0' == "1")
+     option = "&amp;signature="+signature;
+    else
+     option = "&amp;flowPathInstance="+signature;
+
+	 //passing isFromAS Flag
+    url = currPath + "analyze/drill_down_queries/rptFlowPath.jsp?testRun="+'5145' +"&amp;breadCrumbTrackID=" + '1' + temp + option+urlName + "&amp;isFromAS=" + 'false';
+    window.open(url, '_self', 'drillDownReport');
+}
+
+//it will open the Transcation component detail report
+function openSequenceDiagram(signature, rowIndex)
+{
+    setFilters(rowIndex);
+    if(urlName.length &gt; 45)
+      urlName = encodeURIComponent(urlName.substring(0, 45)) + "...";
+
+    urlName = "&amp;urlname="+ urlName;
+
+    var temp = "&amp;urlIndex=" + urlIdx +
+
+    "&amp;pageIndex=" + pageIdx +
+    "&amp;transactionIndex=" + transactionIdx +
+    "&amp;sessionIndex=" + sessionIdx +
+
+    "&amp;generatorId="+generatorId+
+    "&amp;generatorName="+generatorName+
+
+    "&amp;appid=" + appid +
+    "&amp;serverid=" + serverid +
+    "&amp;tierid=" + tierid +
+    "&amp;appName=" + appName +
+    "&amp;serverName=" + serverName +
+    "&amp;tierName=" + tierName +
+    //"&amp;urlname="+ encodeURIComponent(urlName) +
+    "&amp;pageName=" + pageName +
+    "&amp;sessionName=" + sessionName +
+    "&amp;transactionName=" + transactionName +
+    "&amp;userAccess=" + 'NA' +
+    "&amp;userLocation=" + 'NA' +
+    "&amp;userBrowserIndex=" + 'NA' +
+    "&amp;strStatus=" + '-2';
+
+    var option =  "";
+    var url = "";
+
+    if('0' == "1")
+    {
+      option = "&amp;signature="+signature;
+      url = currPath + "analyze/drill_down_queries/NDAggregatedSequenceDiagram.jsp?testRun="+'5145'+urlName;
+    }
+    else
+    {
+      option = "&amp;flowPathInstance="+signature;
+      url = currPath + "analyze/drill_down_queries/NDSequenceDiagram.jsp?testRun="+'5145'+urlName;
+    }
+
+    url = url + "&amp;breadCrumbTrackID=" + '1' + temp + option;
+    window.open(url, '_self', 'drillDownReport');
+}
+
+  //To Show session detail report.
+  var currentFlowpathInstance = "";
+  var childIndex = "";
+  var sessionInstance = "";
+  var startTime = "0";
+  var sessionName = "NA";
+  var status = "";
+  var userIndex = "";
+
+  function openTimingDetail(flowpathIns)
+  {
+    var url = "rptSetFilterGroupByInSession.jsp";
+    currentFlowpathInstance = flowpathIns;
+    postRequest(url+"?testRun="+testRun+"&amp;strOperName=SessionPage&amp;sesLoginName=srvstva"+"&amp;flowpathInstance=" + currentFlowpathInstance, "", "SessionPage");
+  }
+
+  function getResponse(str, parameter, fromOperation)
+  {
+    if(fromOperation == "pageDump")
+    {
+      var arrTemp = new Array();
+      arrTemp = str.split("%%%");
+      var url = currPath + "analyze/rptPageDumpFrames.jsp?testRun=" + testRun;
+      temp = "&amp;breadCrumbTrackID=" + '1'+"&amp;sessionIndex="+arrTemp[0] + "&amp;childIndex="+arrTemp[1] + "&amp;pageName="+arrTemp[2]+"&amp;flagOfDrillDown=yes"+"&amp;flowPathInstance="+currentFlowpathInstance;
+      url = url + temp;
+      window.open(url, '_self', 'drillDownReport');
+    }
+    else if(fromOperation == "SessionPage")
+    {
+      var arrTemp = new Array();
+      arrTemp = str.split("%%%");
+      childIndex = arrTemp[1];
+      sessionInstance = arrTemp[0];
+      startTime = arrTemp[4];
+      pageName = arrTemp[2];
+      sessionName = arrTemp[3];
+      userIndex = arrTemp[6];
+
+      if(arrTemp[5] == 0)
+        status = "success";
+      else
+        status = "NA";
+
+      var url = "rptDrillDownObjDetailTime.jsp" + "?testRun=" + testRun + "&amp;WAN_ENV=" + '0';
+
+      var temp = "&amp;radObjType=" + '3' +
+      "&amp;urlIdx=" + urlIdx +
+
+      "&amp;pageIndex=" + pageIdx +
+      "&amp;transactionIndex=" + transactionIdx +
+      "&amp;sessionIndex=" + sessionIdx +
+
+      "&amp;appid=" + appid +
+      "&amp;serverid=" + serverid +
+      "&amp;appName=" + appName +
+      "&amp;serverName=" + serverName +
+      "&amp;tierName=" + tierName +
+      "&amp;userIndex=" + userIndex +
+      "&amp;childIndex=" + childIndex +
+      "&amp;urlname="+ encodeURIComponent('NA') +
+      "&amp;pageName=" + pageName +
+      "&amp;sessionName=" +sessionName +
+      "&amp;sessionInstance=" + sessionInstance +
+      "&amp;startTime=" + startTime +
+      "&amp;totalTime=" + "NA" +
+      "&amp;objStatus=" + status +
+      "&amp;breadCrumbTrackID=" + '1';
+
+      url =  url + temp;
+      window.open(url, '_self', 'drillDownReport');
+    }
+  }
+
+ var urlIdx = "NA";
+ var serverid = "NA";
+ var appid = "NA";
+ var tierid = "NA";
+ var appName = "NA";
+ var serverName = "NA";
+ var tierName = "NA";
+
+ var sessionIdx = "NA";
+ var pageIdx = "NA";
+ var transactionIdx = "NA";
+ var transactionName = "NA";
+ var sessionName = "NA";
+ var urlName = "NA";
+ var exceptionClassName = "NA";
+ var exceptionThrowingClassName = "NA";
+ var exceptionThrowingMethodName = "NA";
+ var exceptionMessage = "NA";
+ var generatorName = "NA";
+ var generatorId = "NA";
+ function setFilters(rowIndex)
+ {
+   if('-1' != "-1")
+     generatorName = arrDataValues[rowIndex]['-1'];
+   else
+     generatorName = "NA";
+
+   if('-1' != "-1")
+     generatorId = arrDataValues[rowIndex]['-1'];
+   else
+     generatorId = "NA";
+
+   if('0' != "-1")
+     tierid = arrDataValues[rowIndex]['1'];
+   else
+     tierid = "NA";
+
+   if('2' != "-1")
+     serverid = arrDataValues[rowIndex]['3'];
+   else
+     serverid = "NA";
+
+
+   if('4' != "-1")
+     appid = arrDataValues[rowIndex]['5'];
+   else
+     appid = "NA";
+
+   if('7' != "-1")
+     urlIdx = arrDataValues[rowIndex]['7'];
+   else
+     urlIdx = "NA";
+
+   if('-1' != "-1")
+     pageIdx = arrDataValues[rowIndex]['-1'];
+   else
+     pageIdx = "NA";
+
+   if('-1' != "-1")
+     transactionIdx = arrDataValues[rowIndex]['-1'];
+   else
+     transactionIdx = "NA";
+
+   if('-1' != "-1")
+     sessionIdx = arrDataValues[rowIndex]['-1'];
+   else
+     sessionIdx = "NA";
+
+   if('0' != "-1")
+     tierName = arrDataValues[rowIndex]['0'];
+   else
+     tierName = "NA";
+
+   if('2' != "-1")
+     serverName = arrDataValues[rowIndex]['2'];
+   else
+     serverName = "NA";
+
+   if('4' != "-1")
+     appName = arrDataValues[rowIndex]['4'];
+   else
+     appName = "NA";
+
+   if('-1' != "-1")
+     transactionName = arrDataValues[rowIndex]['-1'];
+   else
+     transactionName = "NA";
+
+   if('-1' != "-1")
+     sessionName = arrDataValues[rowIndex]['-1'];
+   else
+     sessionName = "NA";
+
+   if('-1' != "-1")
+     pageName = arrDataValues[rowIndex]['-1'];
+   else
+     pageName = "NA";
+
+   if('6' != "-1")
+     urlName = arrDataValues[rowIndex]['6'];
+   else
+     urlName = "NA";   
+
+   if(tierName == "NA" &amp;&amp; 'NA' != "NA")
+    tierName = 'NA';
+
+   if(appName == "NA" &amp;&amp; 'NA' != "NA")
+    appName = 'NA';
+
+   if(serverName == "NA" &amp;&amp; 'NA' != "NA")
+    serverName = 'NA';
+
+   if(serverid == "NA" &amp;&amp; 'NA' != "NA")
+    serverid = 'NA';
+
+   if(tierid == "NA" &amp;&amp; 'NA' != "NA")
+    tierid = 'NA';
+
+   if(appid == "NA" &amp;&amp; 'NA' != "NA")
+    appid = 'NA';
+
+   //Modified with privious or comming from referer.
+   if(pageIdx == "NA" &amp;&amp; 'NA' != "NA")
+    pageIdx = 'NA';
+
+   if(transactionIdx == "NA" &amp;&amp; 'NA' != "NA")
+    transactionIdx = 'NA';
+
+   if(sessionIdx == "NA" &amp;&amp; 'NA' != "NA")
+    sessionIdx = 'NA';
+
+   if(pageName == "NA" &amp;&amp; 'NA' != "NA")
+    pageName = 'NA';
+
+   if(transactionName == "NA" &amp;&amp; 'NA' != "NA")
+    transactionName = 'NA';
+
+   if(sessionName == "NA" &amp;&amp; 'NA' != "NA")
+    sessionName = 'NA';
+
+   if(urlName == "NA" &amp;&amp; 'NA' != "NA")
+    urlName = 'NA';
+
+   if(generatorName == "NA" &amp;&amp; 'NA' != "NA")
+    generatorName = 'NA';
+
+   if(generatorId == "NA" &amp;&amp; 'NA' != "NA")
+    generatorId = 'NA';
+	
+	//For Setting Exception
+	setAttributes(rowIndex);
+ }
+
+ function openSignatureCount(rowIndex)
+ {
+   setFilters(rowIndex);
+   var url = "FlowPathCompReport.jsp?testRun=" + testRun +
+   "&amp;urlIdx=" + urlIdx +
+
+   "&amp;pageIndex=" + pageIdx +
+   "&amp;transactionIndex=" + transactionIdx +
+   "&amp;sessionIndex=" + sessionIdx +
+
+   "&amp;generatorId="+generatorId+
+   "&amp;generatorName="+generatorName+
+
+   "&amp;urlname="+ encodeURIComponent(urlName) +
+   "&amp;pageName=" + pageName +
+   "&amp;sessionName=" + sessionName +
+   "&amp;transactionName=" + transactionName +
+
+   "&amp;appid=" + appid +
+   "&amp;serverid=" + serverid +
+   "&amp;appName=" + appName +
+   "&amp;serverName=" + serverName +
+   "&amp;tierName=" + tierName +
+   "&amp;tierid=" + tierid +
+   "&amp;exceptionClassName=" + exceptionClassName +
+   "&amp;exceptionThrowingClassName=" + exceptionThrowingClassName +
+   "&amp;exceptionThrowingMethodName=" + replaceCharacters(exceptionThrowingMethodName) +
+   "&amp;exceptionMessage=" + exceptionMessage +
+   "&amp;isSignatureReport=yes" +
+   "&amp;breadCrumbTrackID=" + '1';
+   window.open(url, '_self', 'drillDownReport');
+ }
+ 
+ //function that sets the class id, message id,cause id - to avoid hardcode and wrong passage of id's
+function setAttributes(row)
+{
+   for(var i = 0; i &lt; 1; i++)
+   {
+       for(var j = 0; j &lt; arrDataValues[i].length; j++)
+       {	   
+	   if(trimString(arrDataValues[0][j]) == "Exception Class Name")
+	       exceptionClassName = arrDataValues[row][j];
+	   else if(trimString(arrDataValues[0][j]) == "Exception Throwing Class Name")
+	       exceptionThrowingClassName = arrDataValues[row][j];
+       else if(trimString(arrDataValues[0][j]) == "Exception Throwing Method Name")
+	       exceptionThrowingMethodName = arrDataValues[row][j];
+       else if(trimString(arrDataValues[0][j]) == "Exception Message")
+	       exceptionMessage = arrDataValues[row][j];		   
+       }
+   }
+}
+
+  //Function to Show Http Status Report
+  function showHttpStatusReport(flowPathInstance,rowIndex)
+  {
+      setFilters(rowIndex);
+      var url = "rptHttpRequestResponse.jsp?testRun=" + testRun + "&amp;fpinstance="+flowPathInstance+"&amp;breadCrumbTrackID=" + '1' + "&amp;appName=" + appName +
+	      "&amp;serverName=" + serverName + "&amp;tierName=" + tierName + "&amp;urlName=" + encodeURIComponent(urlName);
+      //window.open(url, '_self', 'drillDownReport');
+      window.open(url, "_blank", "width=1200,height=610,resizable=1");
+  }
+
+  function showHotSpot(flowPathInstance,rowIndex)
+  {
+    setFilters(rowIndex);
+    var url = "rptThreadHotSpotFpInstanceData.jsp?testRun=" + testRun + "&amp;fpinstance="+flowPathInstance+"&amp;breadCrumbTrackID=" + '1' + "&amp;appName=" + appName +
+   "&amp;serverName=" + serverName + "&amp;tierName=" + tierName;
+    window.open(url, '_self', 'drillDownReport');
+  }
+
+ //To show page dump gui.
+ function showPageDump(flowpathIns)
+ {
+   var url = "rptSetFilterGroupByInSession.jsp";
+   currentFlowpathInstance = flowpathIns;
+   postRequest(url+"?testRun="+testRun+"&amp;strOperName=pageDump&amp;sesLoginName=srvstva"+"&amp;flowpathInstance=" + currentFlowpathInstance, "", "pageDump");
+}
+
+function showTransCompInstanceReport()
+{
+  document.write("&lt;br&gt;&lt;table  align = center cellpadding='0' cellspacing='0' class='table' width=98%&gt;");
+  document.write("&lt;tr&gt;&lt;td align='left' class='tableTitle'&gt;");
+
+  showPaginationOption();
+  var signatureN = "NA";
+  document.write("&lt;/td&gt;&lt;/tr&gt;");
+
+  document.write("&lt;tr&gt;&lt;td&gt;");
+  showFilterCriteria(flagPagination,'1','2568','56483', varFilterCriteria, '1', '22');
+  document.write("&lt;/td&gt;&lt;/tr&gt;");
+
+  document.write("&lt;tr&gt;&lt;td&gt;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;");
+  document.write("&lt;tr&gt; &lt;td align='center' valign='top'&gt;");
+
+  document.write("&lt;table class='scrollbarColorChange' cellpadding=0 cellspacing=0 width=98% valign=top align=center border=0&gt;");
+  document.write("&lt;tr&gt;&lt;td&gt;&lt;div id='ScrollablePane' STYLE='overflow:auto; width:100%; height:" + getHeight(.65) + "px; border:1px solid #DFE9F7;'&gt;");
+  document.write("&lt;table style='{table-layout:fixed}' class='resizable' border=0 id=testRunsTableID cellpadding='2' cellspacing=0  width=100% align=center&gt;");
+
+  document.write("&lt;thead id='pfh'&gt;");
+  document.write("&lt;tr class = tableHeaderLockedEnhance &gt;");
+
+  var titleMsg = "";
+
+  if(arrDataValues.length &gt; 2)
+    titleMsg = "Click to sort on ";
+
+  if(queryFailStatus != '1' &amp;&amp; fpIndex != "-1") {
+    if('0' != "1")
+      document.write("&lt;th width=2% class='tableCell'  align=left nowrap&gt;&amp;nbsp;&amp;nbsp;&lt;/th&gt;");
+
+    document.write("&lt;th width=13% class='tableCell'  align=center nowrap title='Action'&gt;&lt;b&gt;&amp;nbsp;Action &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+}
+
+  for(var i = 0; i &lt; arrDataValues[0].length; i++)
+  {
+    var toolTip = tooltipStatus + arrDataValues[0][i] + "." +  "\n" + arrDataValues[0][i] + timeFormatToolTip;
+
+    //"URL", "URLIndex", "FlowPath Signature", "Signature Count", "Min", "Max", "Average", "VMR"
+    //"URL", "URLIndex", "FlowPath Instance", "Start Time" , "FlowPath Duration"
+
+    if(queryFailStatus == '1')
+    {
+      document.write("&lt;th width=100% class='tableCell'  align=left nowrap title='"+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+      break;
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "URL")
+    {
+      document.write("&lt;th class='tableCell' width = '35%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Page Name")
+    {
+      document.write("&lt;th class='tableCell' width = '20%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Transaction Name")
+    {
+      document.write("&lt;th class='tableCell' width = '20%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Session Name")
+    {
+      document.write("&lt;th class='tableCell' width = '20%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    //Generator Name
+    else if(trimString(arrDataValues[0][i]) == "Generator Name")
+    {
+      document.write("&lt;th class='tableCell' width = '6%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Tier Name")
+    {
+      document.write("&lt;th class='tableCell' width = '6%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Server Name")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "App Name")
+    {
+      document.write("&lt;th class='tableCell' width = '6%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Start Time")
+    {
+      toolTip = tooltipStatus + arrDataValues[0][i] + "." +  "\n" + arrDataValues[0][i] + " in (mm/dd/yy hh:mm:ss) format.";
+      document.write("&lt;th class='tableCell' width = '10%' align=right nowrap title='"+toolTip+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "FlowPath Duration")
+    {
+      document.write("&lt;th class='tableCell' width = '9%' align=right nowrap title='"+toolTip+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Average" || trimString(arrDataValues[0][i]) == "Min" || trimString(arrDataValues[0][i]) == "Max")
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+toolTip+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+
+    else if(trimString(arrDataValues[0][i]) == "Signature Count")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Flowpath Count")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Method Count")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "URL Query Parmeter")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Status Code")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "VMR")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Class Name")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Throwing Class Name")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Throwing Method Name")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Message")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Cause")
+    {
+      document.write("&lt;th class='tableCell' width = '8%' align=left nowrap title='"+titleMsg+arrDataValues[0][i]+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + arrDataValues[0][i] + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+	
+	else if(trimString(arrDataValues[0][i]) == "exceptionstacktrace")
+    {
+	   var temp = "Exception Stack Trace";
+      document.write("&lt;th class='tableCell' width = '8%' align=right nowrap title='"+titleMsg+temp+"' onclick = removeSortIndicator('" + i + "');&gt;&lt;b style='cursor:"+getStyleCursor()+"'&gt;&amp;nbsp;" + temp + " &amp;nbsp;&lt;span id = '" + i + "'&gt;&lt;/span&gt;&lt;/b&gt;&lt;/th&gt;");
+    }
+  }
+
+  document.write("&lt;/tr&gt;");
+
+  document.write("&lt;/thead&gt;");
+  if(arrDataValues.length == 1)
+  {
+    //var colspanVal = arrDataValues[0].length-4;
+    //if(arrDataValues.length &gt; 0 &amp;&amp; arrDataValues[0].length == 6)
+      // colspanVal = 6;
+    //checkForEmptyRecords(colspanVal, arrDataValues.length-3);
+    var tableColLength = document.getElementById('testRunsTableID').rows[0].cells.length;
+    checkForEmptyRecords(tableColLength, arrDataValues.length);
+  }
+
+  //alert("fpIndex = "+fpIndex);
+  for(var k = 1; k &lt; arrDataValues.length; k++)
+  {
+    if(k%2 == 0)
+    {
+      document.write("&lt;tr id=\"RowId" + k + "\" class = tableRowOddNew onmouseout=outMouse(id) onmouseover=overMouse(id)&gt;");
+    }
+    else
+    {
+      document.write("&lt;tr id=\"RowId" + k + "\" class = tableRowEvenNew onmouseout=outMouse(id) onmouseover=overMouse(id)&gt;");
+    }
+
+    var msg = "";
+
+    if(fpIndex != "-1")
+      signatureN = arrDataValues[k][fpIndex];
+
+    if('0' == "1")
+      msg = " for flowpath signature " + signatureN;
+    else
+      msg = " for flowpath instance " + signatureN;
+
+
+    if(queryFailStatus != '1' &amp;&amp; fpIndex != "-1")
+    {
+      if('0' != "1")
+        document.write("&lt;td  width = '2%' border='10' class='tableCell' align=left nowrap&gt;&lt;input type=checkbox  class='smallcheckbox' id=chkFlowpath name='chkRow' value='"+arrDataValues[k][fpIndex]+"'&gt;&lt;/td&gt;");
+
+      document.write("&lt;td nowrap class='tableCell' align = center&gt;&lt;a href=javascript:openSequenceDiagram('" + signatureN + "',"+k+")&gt; &lt;img src='/netstorm/images/SequenceIcon.png' id='imgFlowpathReport' title = 'Show Sequence Diagram"+msg+"' style = '{cursor:pointer;}'/&gt;&lt;/a&gt;"+"&amp;nbsp;&amp;nbsp;&lt;a href=javascript:openLogAndQuery('log','" +signatureN+ "',"+k+")&gt;" + "&lt;img src = /netstorm/images/logIcon.png  title = 'Show Logs Report"+msg+"'&gt;" + "&lt;/a&gt;&amp;nbsp;&amp;nbsp;" + "&lt;a href=javascript:openLogAndQuery('query','" +signatureN+ "',"+k+")&gt;" + "&lt;img src = /netstorm/images/queryIcon.png  title = 'Show DB Requests Report"+msg+"'&gt;" + "&lt;/a&gt;");
+
+     //link if their is fp instance available.
+     if('0' != "1")
+     {
+       document.write("&amp;nbsp;&amp;nbsp;&lt;img src='/netstorm/images/timing_detail.png' id='imgQueryReport' title = 'View Session Time Detail" + msg + "' onclick=openTimingDetail('" + signatureN + "') style = '{cursor:pointer;}'/&gt;");
+
+       document.write("&amp;nbsp;&amp;nbsp;&lt;img src='/netstorm/images/imgPageDump.png' id='imgPageDump' title = 'Show Page Dump for Session associated with flowpath instance "+signatureN+"' onclick=showPageDump('" + signatureN + "'); style = '{cursor:pointer;}'/&gt;");
+
+       document.write("&amp;nbsp;&amp;nbsp;&lt;img src='/netstorm/images/hotspot.png' id='imgHotspotId' title = 'Show HotSpot Thread details for flowpath instance "+signatureN+"' onclick=showHotSpot('" + signatureN + "','"+k+"'); style = '{cursor:pointer;}'/&gt;");
+
+       //Link for showing Http Request and Response
+       document.write("&amp;nbsp;&amp;nbsp;&lt;img src='/netstorm/images/http.png' id='imgHttpReqId' title = 'Show Http Request and Response Details for flowpath instance "+signatureN+"' onclick=showHttpStatusReport('" + signatureN + "','"+k+"'); style = '{cursor:pointer;}'/&gt;");  
+     }
+
+     document.write("&lt;/td&gt;");
+    }
+
+    for(var i = 0; i &lt; arrDataValues[k].length; i++)
+    {
+      if(queryFailStatus == '1')
+        document.write("&lt;td  width = '90%' colspan = '"+arrDataValues[0].length +"' class='tableCell' align=center nowrap title = '"+arrDataValues[k][i]+"' &gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "URL")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Generator Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Page Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Transaction Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Session Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Tier Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "Server Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+      else if(trimString(arrDataValues[0][i]) == "App Name")
+        document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"'&gt;&amp;nbsp;" + arrDataValues[k][i] + "&lt;/td&gt;");
+
+     else if(trimString(arrDataValues[0][i]) == "Start Time")
+    {
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+" (mm/dd/yy hh:mm:ss)'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "FlowPath Duration")
+    {
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+" (HH.MM.SS.ms)'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+    }
+
+    else if(trimString(arrDataValues[0][i]) == "Method Count")
+    {
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+    }
+
+    else if (trimString(arrDataValues[0][i]) == "Signature Count")
+    {
+      if(trimString(arrDataValues[0][i]) == "0")
+        document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+      else
+        document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+" '&gt;&lt;a href=javascript:openSignatureCount("+k+")&gt;" + arrDataValues[k][i] + "&lt;/a&gt;&amp;nbsp;&lt;/td&gt;");
+    }
+
+
+    else if (trimString(arrDataValues[0][i]) == "Flowpath Count")
+    {
+      if(trimString(arrDataValues[0][i]) == "0")
+        document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+      else
+        document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+" '&gt;&lt;a href=javascript:openCount('" + signatureN + "',"+k+")&gt;" + arrDataValues[k][i] + "&lt;/a&gt;&amp;nbsp;&lt;/td&gt;");
+    }
+
+
+    else if(trimString(arrDataValues[0][i]) == "Average")
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"  (HH.MM.SS.ms)'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+
+    else if(trimString(arrDataValues[0][i]) == "Min" || trimString(arrDataValues[0][i]) == "Max")
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"  (HH.MM.SS.ms)'&gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+
+    else if(trimString(arrDataValues[0][i]) == "VMR")
+      document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+
+      /*else if(trimString(arrDataValues[0][i]) != "FlowPath Signature" &amp;&amp; trimString(arrDataValues[0][i]) != "URLIndex")
+        document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;"); */
+    else if(trimString(arrDataValues[0][i]) == "URL Query Parmeter")
+	document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Class Name")
+	document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Message")
+	document.write("&lt;td class='tableCell' align=left nowrap title = '"+ replaceCharacters(decodeURIComponent(arrDataValues[k][i]))+"' &gt;" + replaceCharacters(decodeURIComponent(arrDataValues[k][i])) + "&amp;nbsp;&lt;/td&gt;");
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Throwing Class Name")
+	document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Cause")
+	document.write("&lt;td class='tableCell' align=left nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+	
+	else if(trimString(arrDataValues[0][i]) == "Exception Throwing Method Name")
+	document.write("&lt;td class='tableCell' align=left nowrap title = '"+replaceCharacters(arrDataValues[k][i])+"' &gt;" + replaceCharacters(arrDataValues[k][i]) + "&amp;nbsp;&lt;/td&gt;");
+	
+    else if(trimString(arrDataValues[0][i]) == "Status Code")
+      {
+	if(trimString(arrDataValues[k][i]) == "0")
+	  document.write("&lt;td class='tableCell' align=right nowrap title = '"+"-"+"' &gt;" + "-" + "&amp;nbsp;&lt;/td&gt;");
+	else
+	  document.write("&lt;td class='tableCell' align=right nowrap title = '"+arrDataValues[k][i]+"' &gt;" + arrDataValues[k][i] + "&amp;nbsp;&lt;/td&gt;");
+      }
+    }
+
+    document.write("&lt;/tr&gt;");
+  }
+  document.write("&lt;tbody&gt;");
+  document.write("&lt;/tbody&gt;&lt;/table&gt;&lt;a name = tail&gt;&lt;/a&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;");   //table Data Ends
+
+  document.write("&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;");
+
+  document.write("&lt;tr&gt;&lt;td&gt;");
+  document.write("&lt;table align='center'&gt;&lt;tr&gt;");
+
+  if(queryFailStatus != '1' &amp;&amp; fpIndex != "-1" &amp;&amp; '0' != "1")
+  {
+    document.write("&lt;td align='center'&gt;&lt;input type=Button class=button style='width:120;;'  title='Click to Compare Sequence' value='Compare Sequence' name='Compare Sequence' onclick = clickCompareSequenceButton();&gt;&lt;/td&gt;");
+
+    //Adding buttons to store flowpath instances for comparing.
+    document.write("&lt;td&gt;&lt;input type=Button class=button style='width:120;'title='Click to add in compare list' value='Add To Compare' onclick = clickAddToCompare();&gt;&lt;/td&gt;");
+    document.write("&lt;td&gt;&lt;input type=Button class=button style='width:115;' title='Click to view/compare " + size + " added flowpath instances' value='Compare List' name='View Sequence' onclick = clickViewCompare();&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;");
+  }
+
+  document.write("&lt;/tr&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;");
+
+  if(arrDataValues.length &gt; 2)
+    setupTestRunsTableSort();
+  else
+    removeSortIndicator();
+}
+
+function clickCompareSequenceButton()
+ {
+   var count = 0;
+   var flag = false;
+   var flowPathInstances = "";
+   if(arrDataValues.length == 0)
+   {
+     alert("No Record Present");
+     return;
+   }
+   else if(arrDataValues.length == 2)
+   {
+     if(document.frmMain.chkRow.checked == true)
+     {
+       alert("Please select atleast two records to compare sequences");
+       return;
+    }
+  }
+  else if(arrDataValues.length &gt;= 2)
+  {
+    for(i = 0 ; i &lt; document.frmMain.chkRow.length; i++)
+    {
+      if (document.frmMain.chkRow[i].checked == true)
+      {
+        if(flowPathInstances == "")
+          flowPathInstances = document.frmMain.chkRow[i].value;
+        else
+          flowPathInstances = flowPathInstances + "_" + document.frmMain.chkRow[i].value;
+        flag = true ;
+        count++;
+      }
+    }
+  }
+
+  if(flag == false)
+  {
+    alert("No record(s) selected. Please select atleast two records to compare sequences and try again.");
+    return;
+  }
+  else
+  {
+    if(count == 1)
+    {
+      alert("Please select atleast two records to compare sequences.")
+      return;
+    }
+    else if(count &gt; 1)
+    {
+      openSequenceDiff(flowPathInstances);
+     }
+   }
+ }
+
+ function clickAddToCompare()
+ {
+   var count = 0;
+   var flag = false;
+   var flowPathInstances = "";
+   if(arrDataValues.length == 0)
+   {
+     alert("No Record Present");
+     return;
+   }
+   else if(arrDataValues.length == 2)
+   {
+     if(document.frmMain.chkRow.checked == true)
+     {
+       flowPathInstances = document.frmMain.chkRow.value;
+       flag = true ;
+     }
+   }
+   else if(arrDataValues.length &gt;= 2)
+   {
+     for(i = 0 ; i &lt; document.frmMain.chkRow.length; i++)
+     {
+       if (document.frmMain.chkRow[i].checked == true)
+       {
+         if(flowPathInstances == "")
+           flowPathInstances = document.frmMain.chkRow[i].value;
+         else
+           flowPathInstances = flowPathInstances + "##" + document.frmMain.chkRow[i].value;
+         flag = true ;
+       }
+     }
+   }
+
+   if(flag == false)
+   {
+     alert("No record(s) selected. Please select at least one record and try again.");
+     return;
+   }
+   else
+   {
+     submitJSP("AddToCompareList", flowPathInstances);
+   }
+ }
+
+ function clickViewCompare()
+ {
+   if(size == 0) {
+     alert("Compare list is empty.");
+	 return;
+   }
+
+   var url = genCommonURLParam('rptViewCompareList.jsp');
+   url += "&amp;breadCrumbTrackID=" + '1';
+   window.open(url, '_self', 'drillDownReport');
+ }
+ 
+  //function that replaces characters
+  function replaceCharacters(str)
+  {
+  str = replaceAll(str,"%3C","");
+  str = replaceAll(str,"%3E","");
+  str = replaceAll(str,"%7C","|");
+  str = replaceAll(str,"%26","&amp;");
+  str = replaceAll(str,"+"," ");
+  return str;
+  }
+
+ function openSequenceDiff(flowPathInstance)
+ {
+   var url = "rptSequenceDiff.jsp?testRun=" + testRun;
+   url = url + "&amp;flowPathInstance="+flowPathInstance;
+
+    var temp = "&amp;urlname="+ encodeURIComponent('NA') +
+   "&amp;appid=" + 'NA' +
+   "&amp;serverid=" + 'NA'+
+   "&amp;tierid=" + 'NA' +
+
+   "&amp;appName=" + 'NA' +
+   "&amp;serverName=" + 'NA' +
+   "&amp;tierName=" + 'NA' +
+
+    "&amp;urlIndex=" + 'NA' +
+    "&amp;pageName=" + 'NA' +
+    "&amp;pageIndex=" + 'NA' +
+    "&amp;sessionName=" + 'NA' +
+    "&amp;sessionIndex=" + 'NA' +
+    "&amp;transactionName=" + 'NA' +
+    "&amp;transactionIndex=" + 'NA' +
+    "&amp;userAccess=" + 'NA' +
+    "&amp;userLocation=" + 'NA' +
+    "&amp;userBrowserIndex=" + 'NA' +
+    "&amp;strStatus=" + '-2'+
+    "&amp;breadCrumbTrackID=" + '1'+
+    "&amp;objectType=5";
+
+    url = url + temp;
+    window.open(url, '_self', 'drillDownReport');
+  }
+
+//open log and query report.
+function openLogAndQuery(type, signature, rowIndex)
+{
+  setFilters(rowIndex);
+  var varTemp = "&amp;objectType=6" + "&amp;NDReportType=" +  "Flowpath DB requests";
+  var fileName = currPath + "analyze/drill_down_queries/rptFlowpathQueryReport.jsp";
+  if(type == "log")
+  {
+    varTemp =  "&amp;objectType=" + '5' + "&amp;NDReportType=" +  "Flowpath Logs";
+    fileName = currPath + "analyze/drill_down_queries/rptFlowPathInstanceLog.jsp";
+  }
+
+  if(urlName.length &gt; 45)
+   urlName = encodeURIComponent(urlName.substring(0, 45)) + "...";
+
+  urlName = "&amp;urlname="+ urlName;
+
+  var temp = "&amp;urlIndex=" + urlIdx +
+
+  "&amp;pageIndex=" + pageIdx +
+  "&amp;transactionIndex=" + transactionIdx +
+  "&amp;sessionIndex=" + sessionIdx +
+
+  "&amp;generatorId="+generatorId+
+  "&amp;generatorName="+generatorName+
+
+  "&amp;appid=" + appid +
+  "&amp;serverid=" + serverid +
+  "&amp;tierid=" + tierid +
+  "&amp;appName=" + appName +
+  "&amp;serverName=" + serverName +
+  "&amp;tierName=" + tierName +
+  //"&amp;urlname="+ encodeURIComponent(urlName) +
+  "&amp;pageName=" + pageName +
+  "&amp;sessionName=" + sessionName +
+  "&amp;transactionName=" + transactionName +
+  "&amp;userAccess=" + 'NA' +
+  "&amp;userLocation=" + 'NA' +
+  "&amp;userBrowserIndex=" + 'NA' +
+  "&amp;strStatus=" + '-2';
+
+  var option =  "";
+  if('0' == "1")
+   option = "&amp;signature="+signature;
+  else
+   option = "&amp;flowPathInstance="+signature;
+
+  url = fileName + "?testRun="+'5145'+"&amp;breadCrumbTrackID=" + '1' + temp + varTemp +option+urlName;
+
+  window.open(url, '_self')
+}
+
+function setupTestRunsTableSort()
+{
+  // var st;
+  // st = new SortableTable(document.getElementById("testRunsTableID"), ["None", "String", "DecimalNum", "DecimalNum", "DecimalNum", "DecimalNum", "DecimalNum"]);
+  // add sort types
+  // var sTypePro = SortableTable.prototype;
+  // sTypePro.addSortType("String", SortableTable.toUpperCase);
+  // sTypePro.addSortType("DecimalNum", SortableTable.toDecimalNum);
+  // sTypePro.addSortType("DecimalNum", SortableTable.toDecimalNum);
+  // sTypePro.addSortType("DecimalNum", SortableTable.toDecimalNum);
+  // sTypePro.addSortType("DecimalNum", SortableTable.toDecimalNum);
+  // sTypePro.addSortType("DecimalNum", SortableTable.toDecimalNum);
+
+  tableColTypes = tableColTypes.split(",");
+  var nn = tableColTypes.length; // store length of column types
+  var st = new SortableTable(document.getElementById("testRunsTableID"), tableColTypes);
+  for(count = 0; count &lt; nn; count++)
+  {
+    if(tableColTypes[count] == "String")
+      SortableTable.prototype.addSortType("String", SortableTable.toUpperCase);
+    else if(tableColTypes[count] == "DecimalNum")
+      SortableTable.prototype.addSortType("DecimalNum", SortableTable.toDecimalNum);
+  }
+}
+
+function showDownloadBtns1( strPDFFileName, strExcelFileName, strWordFileName, strCSVFileName) {
+  document.write("&lt;tr&gt;&lt;td&gt;&lt;table border=0 width = '100%'&gt;&lt;tr&gt;&lt;td width = '90%'&gt;");
+  document.write("&lt;font size=1 class = textNote&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Download Report as &lt;a href=/netstorm/temp/" + strPDFFileName + " title='Right click mouse button and click Save Target As to download report' target='_blank'&gt;&lt;img src=/netstorm/images/iconPDF.gif border=0&gt;&lt;/a&gt;");
+  document.write("&amp;nbsp;&lt;a href=/netstorm/temp/" + strExcelFileName + " title='Right click mouse button and click Save Target As to download report' target='_blank'&gt;");
+  document.write("&lt;img src=/netstorm/images/iconExcel.gif border=0&gt;&lt;/a&gt;");
+  document.write("&amp;nbsp;&lt;a href=/netstorm/temp/" + strWordFileName + " title='Right click mouse button and click Save Target As to download report' target='_blank'&gt;");
+  document.write("&lt;img src=/netstorm/images/iconWord.gif border=0&gt;&lt;/a&gt;");
+  if(flagCSV == 1)
+  {
+    document.write("&amp;nbsp;&lt;a href=/netstorm/temp/" + strCSVFileName + " title='Right click mouse button and click Save Target As to download report' target='_blank'&gt;");
+    document.write("&lt;img src=/netstorm/images/iconCSV.png border=0&gt;&lt;/a&gt;");
+  }
+  document.write("&lt;/font&gt;");
+  if(size==0)
+    var image = "empty.png";
+  else
+    var image = "full.png";
+
+  document.write("&lt;/td&gt;&lt;td width = '6%' align='right'&gt;Compare List&lt;/td&gt;&lt;td width = '4%' align = 'center'&gt;&amp;nbsp;&lt;img src='/netstorm/images/"+image+"' id='imgFlowpathReport' title = 'Click to view/compare " + size + " added flowpath instances' onclick=clickViewCompare() style = '{cursor:pointer;}' align='left'/&gt;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;");
+
+}
+
+
+</a0:script>
+
+<!--  
+  Name   : header.htmlf
+  Author : Prateek/Neeraj
+  Purpose: Add stylesheets ,Help & generateTitle
+           <Fill details here>
+  Notes  :
+    None
+  Modification History:
+-->
+
+<!--?xml version="1.0" encoding="ISO-8859-1"?-->
+
+
+
+
+<a0:meta content="text/html;charset=ISO-8859-1" http-equiv="Content-type" />
+<a0:meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control" />
+<a0:meta content="no-cache" http-equiv="Pragma" />
+<a0:meta content="0" http-equiv="Expires" />
+<a0:meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type" />
+<a0:link media="all" type="text/css" href="/netstorm/css/AdvancedNetstorm.css" rel="stylesheet" />
+<a0:link media="all" type="text/css" href="/netstorm/css/Netstorm.css" rel="stylesheet" />
+<!--<title>FlowPath Report - Test Run Number : 5145 (Query Name - Query1) - srvstva - 192.168.1.95:80 </title>-->
+
+  <a0:title> NetStorm  - FlowPath Report - Test Run Number : 5145 (Query Name - Query1) (192.168.1.95:80) </a0:title>
+
+
+
+<!--<link rel="stylesheet" type="text/css" href="../../css/reset-fonts-grids.css"/>-->
+
+<a0:link href="/netstorm/yui/css/menu.css" type="text/css" rel="stylesheet" />
+
+
+<!-- Combo-handled YUI CSS files: -->
+<!--<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?&2.8.2r1/build/menu/assets/skins/sam/menu.css">-->
+
+<a0:style type="text/css">
+
+div.yui-b p {
+  margin: 0 0 .5em 0;
+  color: #999;
+}
+
+div.yui-b p strong {
+  font-weight: bold;
+  color: #000;
+}
+
+div.yui-b p em {
+  color: #000;
+}
+
+h1 {
+  font-weight: bold;
+  margin: 0 0 1em 0;
+  padding: .25em .5em;
+  background-color: #ccc;
+}
+
+#productsandservices {
+  margin: 0 0 0px 0;
+}
+
+.screenTitleDrillDown
+{
+  color:#000080;
+  font-size:15px;
+  font-weight:bold;
+  background-color:#F2F2F2;
+  height:18px;
+  text-align: left;
+  padding-left: 10px;
+  text-align:center;
+
+  border-left:1px solid #ECE9DA;
+  border-right:1px solid #ECE9DA;
+
+}
+</a0:style>
+
+
+<!-- This method creating a menu with option.--->
+<!-----------------------Start ----------------->
+
+
+<a0:script type="text/javascript">
+
+/*
+     Initialize and render the MenuBar when its elements are ready
+     to be scripted.
+*/
+
+YAHOO.util.Event.onContentReady("productsandservices", function () {
+
+/*
+  Instantiate a MenuBar:  The first argument passed to the constructor
+  is the id for the Menu element to be created, the second is an
+   object literal of configuration properties.
+*/
+
+    var oMenuBar = new YAHOO.widget.MenuBar("productsandservices", {
+                                                autosubmenudisplay: true,
+                                                hidedelay: 750,
+                                                lazyload: true});
+
+/*
+     Call the "render" method with no arguments since the
+     markup for this MenuBar instance is already exists in
+     the page.
+*/
+
+    oMenuBar.render();
+
+});
+
+function openSetting()
+{
+  window.open("../admin/setting.jsp", 'settings');
+}
+
+function openLogout()
+{
+  submitJSP("logout", "");
+}
+  
+</a0:script>
+
+<!--------------------------------- End--------------------------------->
+
+</a0:head>
+
+<a0:body onunload="onUnLoadFunction()" onbeforeunload="onBeforeUnLoadFunction()" onload="onLoadFunction()">
+
+<!-- Neeraj 9/29/06 - added method as 'post' as URL size was becoming too big in CmpResults -->
+<!-- Neeraj 6/30/08 - Changed method back to 'get' as several screen not working/PDF not generating.
+. Checked CmpResults and it is working fine -->
+<!-- Neeraj 7/04/08 - Changed method back to 'post' again as CmpRptUsingTemplate not working. DU screen delete not working 
+-->
+<a0:form method="post" name="frmMain">
+
+<!-- We can't move hidden variables before form b'couz form is the object/component which holds hidden variable value,so document.strOperName.value is incorrect statement & hidden variables should be inside form-->
+
+<a0:input type="hidden" value="" name="strOperName" />
+<a0:input type="hidden" value="" name="strOperValue" />
+
+
+
+<a0:table width="100%" align="center" cellspacing="4" cellpadding="0" border="0" id="header" style="height:1">
+  <a0:tbody><a0:tr> <a0:td width="10%" valign="top" align="left"><a0:img width="140" height="30" src="/netstorm//images/logo.png" /></a0:td>
+
+  <a0:td align="center">
+      <a0:table width="100%" id="TitleTR">
+      
+        <a0:tbody><a0:tr class="screenTitleDrillDown"><a0:td> <a0:script> genTitle("Netstorm - " + "FlowPath Report - Test Run Number : 5145 (Query Name - Query1)", "5145", "0", 'true') </a0:script>Netstorm - FlowPath Report - Test Run Number : 5145 (Query Name - Query1)</a0:td></a0:tr>
+	
+      </a0:tbody></a0:table>
+  </a0:td>
+  <a0:td width="5%" align="center"><a0:img width="40" height="19" tabindex="1" onclick="javascript:openFullHelp();" title="Complete Help" style="cursor:help;" src="/netstorm/images/completeHelp.gif" /></a0:td>  
+  </a0:tr>
+</a0:tbody></a0:table>
+
+
+
+<a0:table width="100%" align="center" cellspacing="0" cellpadding="0" border="0" id="middlePart">
+<a0:tbody><a0:tr><a0:td>
+  
+ 
+
+
+<a0:script> showTransCompInstanceReport() </a0:script><a0:br /><a0:table width="98%" align="center" cellspacing="0" cellpadding="0" class="table"><a0:tbody><a0:tr><a0:td align="left" class="tableTitle"><a0:table width="95%" cellspacing="0" cellpadding="0"><a0:tbody><a0:tr><a0:td width="55%" align="left" class="tableTitle"><a0:span id="breadCrumbID"><a0:a title="FlowPath Report" id="link0" style="color: rgb(231, 117, 14); font-weight: bold; text-decoration: none;">FlowPath Report</a0:a></a0:span></a0:td></a0:tr></a0:tbody></a0:table></a0:td></a0:tr><a0:tr><a0:td><a0:br /><a0:table width="98%" align="center" style="border-top:1px solid #C3D9FF; border-left:1px solid #C3D9FF;border-right:1px solid #C3D9FF;" class="tableTitle"><a0:tbody><a0:tr><a0:td width="20%"><a0:img style="{cursor:pointer;}" onclick="showHide('rightArrow')" id="Arrow" src="/netstorm/images/arrow_expand.png" />  Filter Criteria</a0:td><a0:td width="20%" id="showInfoId"> </a0:td><a0:td width="60%" align="right"><a0:span id="ProgressBarArea"></a0:span>  Show:  <a0:select class="valueOfListBox" style="width:10%;height:20px;" onchange="changeValueOnSelect('itemSelect',this.value);" name="lstLimit"><a0:option value="22">22 rows</a0:option><a0:option value="100">100 rows</a0:option><a0:option value="200">200 rows</a0:option><a0:option value="300">300 rows</a0:option><a0:option value="400">400 rows</a0:option><a0:option value="500">500 rows</a0:option><a0:option value="600">600 rows</a0:option><a0:option value="700">700 rows</a0:option><a0:option value="800">800 rows</a0:option><a0:option value="900">900 rows</a0:option><a0:option value="1000">1000 rows</a0:option><a0:option value="2000">2000 rows</a0:option><a0:option value="3000">3000 rows</a0:option><a0:option value="4000">4000 rows</a0:option><a0:option value="5000">5000 rows</a0:option><a0:option value="6000">6000 rows</a0:option><a0:option value="7000">7000 rows</a0:option><a0:option value="8000">8000 rows</a0:option><a0:option value="9000">9000 rows</a0:option><a0:option value="10000">10000 rows</a0:option></a0:select>   Page 1 of 2568 (Rows 1 to 22) (Total Rows: 56483)    <a0:img onclick="changeValue('reduce');" id="spinner_Prev" src="http://192.168.1.95/netstorm/images/arrow_prev_disable.png" />   <a0:img onclick="changeValue('add');" id="spinner_Next" src="http://192.168.1.95/netstorm/images/arrow_next.png" /></a0:td></a0:tr></a0:tbody></a0:table><a0:table width="98%" align="center" style="border-left:1px solid #C3D9FF;border-right:1px solid #C3D9FF;border-bottom:1px solid #C3D9FF;"><a0:tbody><a0:tr><a0:td valign="top" style="text-align: justify; text-justify: auto; font-size:10px; text-align:left;" id="hideTable">URL Status = All</a0:td></a0:tr></a0:tbody></a0:table></a0:td></a0:tr><a0:tr><a0:td> </a0:td></a0:tr><a0:tr> <a0:td valign="top" align="center"><a0:table width="98%" align="center" cellspacing="0" cellpadding="0" border="0" valign="top" class="scrollbarColorChange"><a0:tbody><a0:tr><a0:td><a0:div style="overflow:auto; width:100%; height:473.2px; border:1px solid #DFE9F7;" id="ScrollablePane"><a0:table width="100%" align="center" cellspacing="0" cellpadding="2" border="0" id="testRunsTableID" class="resizable" style="{table-layout:fixed}"><a0:thead id="pfh"><a0:tr class="tableHeaderLockedEnhance"><a0:th width="2%" nowrap="nowrap" align="left" class="tableCell" _sorttype="None">  </a0:th><a0:th width="13%" nowrap="nowrap" align="center" title="Action" class="tableCell" _sorttype="None"><a0:b> Action  <a0:span id="undefined"></a0:span></a0:b></a0:th><a0:th width="6%" nowrap="nowrap" align="left" onclick="removeSortIndicator('0');" title="Click to sort on Tier Name" class="tableCell"><a0:b style="cursor:pointer"> Tier Name  <a0:span id="0"><a0:img src="/netstorm/images/downArrow.gif" /></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="8%" nowrap="nowrap" align="left" onclick="removeSortIndicator('2');" title="Click to sort on Server Name" class="tableCell"><a0:b style="cursor:pointer"> Server Name  <a0:span id="2"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="6%" nowrap="nowrap" align="left" onclick="removeSortIndicator('4');" title="Click to sort on App Name" class="tableCell"><a0:b style="cursor:pointer"> App Name  <a0:span id="4"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="35%" nowrap="nowrap" align="left" onclick="removeSortIndicator('6');" title="Click to sort on URL" class="tableCell"><a0:b style="cursor:pointer"> URL  <a0:span id="6"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="10%" nowrap="nowrap" align="right" onclick="removeSortIndicator('9');" title="Click to sort on Start Time.
+Start Time in (mm/dd/yy hh:mm:ss) format." class="tableCell"><a0:b style="cursor:pointer"> Start Time  <a0:span id="9"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="9%" nowrap="nowrap" align="right" onclick="removeSortIndicator('10');" title="Click to sort on FlowPath Duration.
+FlowPath Duration in HH:MM:SS.ms format." class="tableCell"><a0:b style="cursor:pointer"> FlowPath Duration  <a0:span id="10"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="8%" nowrap="nowrap" align="right" onclick="removeSortIndicator('11');" title="Click to sort on Method Count" class="tableCell"><a0:b style="cursor:pointer"> Method Count  <a0:span id="11"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="8%" nowrap="nowrap" align="right" onclick="removeSortIndicator('12');" title="Click to sort on URL Query Parmeter" class="tableCell"><a0:b style="cursor:pointer"> URL Query Parmeter  <a0:span id="12"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th><a0:th width="8%" nowrap="nowrap" align="right" onclick="removeSortIndicator('13');" title="Click to sort on Status Code" class="tableCell"><a0:b style="cursor:pointer"> Status Code  <a0:span id="13"></a0:span></a0:b><a0:img src="/netstorm/images/blank.gif" class="sort-arrow" /></a0:th></a0:tr></a0:thead><a0:tbody><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId1"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="284223826495238" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('284223826495238',1)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 284223826495238" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','284223826495238',1)"><a0:img title="Show Logs Report for flowpath instance 284223826495238" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','284223826495238',1)"><a0:img title="Show DB Requests Report for flowpath instance 284223826495238" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('284223826495238')" title="View Session Time Detail for flowpath instance 284223826495238" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('284223826495238');" title="Show Page Dump for Session associated with flowpath instance 284223826495238" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('284223826495238','1');" title="Show HotSpot Thread details for flowpath instance 284223826495238" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('284223826495238','1');" title="Show Http Request and Response Details for flowpath instance 284223826495238" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/cart/cart.jsp" class="tableCell"> /crs/storeus/cart/cart.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:34 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:34 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:01.927 (HH.MM.SS.ms)" class="tableCell">00:00:01.927 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId2"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="284223825832705" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('284223825832705',2)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 284223825832705" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','284223825832705',2)"><a0:img title="Show Logs Report for flowpath instance 284223825832705" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','284223825832705',2)"><a0:img title="Show DB Requests Report for flowpath instance 284223825832705" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('284223825832705')" title="View Session Time Detail for flowpath instance 284223825832705" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('284223825832705');" title="Show Page Dump for Session associated with flowpath instance 284223825832705" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('284223825832705','2');" title="Show HotSpot Thread details for flowpath instance 284223825832705" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('284223825832705','2');" title="Show Http Request and Response Details for flowpath instance 284223825832705" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:31 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:31 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:01.686 (HH.MM.SS.ms)" class="tableCell">00:00:01.686 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId3"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2748849784582" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2748849784582',3)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2748849784582" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2748849784582',3)"><a0:img title="Show Logs Report for flowpath instance 2748849784582" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2748849784582',3)"><a0:img title="Show DB Requests Report for flowpath instance 2748849784582" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2748849784582')" title="View Session Time Detail for flowpath instance 2748849784582" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2748849784582');" title="Show Page Dump for Session associated with flowpath instance 2748849784582" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2748849784582','3');" title="Show HotSpot Thread details for flowpath instance 2748849784582" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2748849784582','3');" title="Show Http Request and Response Details for flowpath instance 2748849784582" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/cart/cart.jsp" class="tableCell"> /crs/storeus/cart/cart.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:34 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:34 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:01.039 (HH.MM.SS.ms)" class="tableCell">00:00:01.039 </a0:td><a0:td nowrap="nowrap" align="right" title="5002" class="tableCell">5002 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId4"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2748847924993" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2748847924993',4)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2748847924993" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2748847924993',4)"><a0:img title="Show Logs Report for flowpath instance 2748847924993" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2748847924993',4)"><a0:img title="Show DB Requests Report for flowpath instance 2748847924993" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2748847924993')" title="View Session Time Detail for flowpath instance 2748847924993" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2748847924993');" title="Show Page Dump for Session associated with flowpath instance 2748847924993" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2748847924993','4');" title="Show HotSpot Thread details for flowpath instance 2748847924993" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2748847924993','4');" title="Show Http Request and Response Details for flowpath instance 2748847924993" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:26 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:26 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.745 (HH.MM.SS.ms)" class="tableCell">00:00:00.745 </a0:td><a0:td nowrap="nowrap" align="right" title="5002" class="tableCell">5002 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId5"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2748849565442" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2748849565442',5)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2748849565442" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2748849565442',5)"><a0:img title="Show Logs Report for flowpath instance 2748849565442" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2748849565442',5)"><a0:img title="Show DB Requests Report for flowpath instance 2748849565442" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2748849565442')" title="View Session Time Detail for flowpath instance 2748849565442" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2748849565442');" title="Show Page Dump for Session associated with flowpath instance 2748849565442" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2748849565442','5');" title="Show HotSpot Thread details for flowpath instance 2748849565442" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2748849565442','5');" title="Show Http Request and Response Details for flowpath instance 2748849565442" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/browse/category.jsp" class="tableCell"> /crs/browse/category.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:33 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:33 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.275 (HH.MM.SS.ms)" class="tableCell">00:00:00.275 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId6"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="284223826276098" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('284223826276098',6)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 284223826276098" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','284223826276098',6)"><a0:img title="Show Logs Report for flowpath instance 284223826276098" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','284223826276098',6)"><a0:img title="Show DB Requests Report for flowpath instance 284223826276098" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('284223826276098')" title="View Session Time Detail for flowpath instance 284223826276098" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('284223826276098');" title="Show Page Dump for Session associated with flowpath instance 284223826276098" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('284223826276098','6');" title="Show HotSpot Thread details for flowpath instance 284223826276098" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('284223826276098','6');" title="Show Http Request and Response Details for flowpath instance 284223826276098" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/browse/category.jsp" class="tableCell"> /crs/browse/category.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:33 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:33 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.274 (HH.MM.SS.ms)" class="tableCell">00:00:00.274 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId7"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="284223826385668" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('284223826385668',7)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 284223826385668" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','284223826385668',7)"><a0:img title="Show Logs Report for flowpath instance 284223826385668" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','284223826385668',7)"><a0:img title="Show DB Requests Report for flowpath instance 284223826385668" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('284223826385668')" title="View Session Time Detail for flowpath instance 284223826385668" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('284223826385668');" title="Show Page Dump for Session associated with flowpath instance 284223826385668" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('284223826385668','7');" title="Show HotSpot Thread details for flowpath instance 284223826385668" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('284223826385668','7');" title="Show Http Request and Response Details for flowpath instance 284223826385668" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/browse/productDetailColorSizePicker.jsp" class="tableCell"> /crs/storeus/browse/productDetailColorSizePicker.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:33 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:33 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.244 (HH.MM.SS.ms)" class="tableCell">00:00:00.244 </a0:td><a0:td nowrap="nowrap" align="right" title="656" class="tableCell">656 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId8"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2748849673988" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2748849673988',8)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2748849673988" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2748849673988',8)"><a0:img title="Show Logs Report for flowpath instance 2748849673988" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2748849673988',8)"><a0:img title="Show DB Requests Report for flowpath instance 2748849673988" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2748849673988')" title="View Session Time Detail for flowpath instance 2748849673988" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2748849673988');" title="Show Page Dump for Session associated with flowpath instance 2748849673988" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2748849673988','8');" title="Show HotSpot Thread details for flowpath instance 2748849673988" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2748849673988','8');" title="Show Http Request and Response Details for flowpath instance 2748849673988" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/browse/productDetailColorSizePicker.jsp" class="tableCell"> /crs/storeus/browse/productDetailColorSizePicker.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:11:33 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:11:33 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.243 (HH.MM.SS.ms)" class="tableCell">00:00:00.243 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId9"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="3098973883201491" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('3098973883201491',9)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 3098973883201491" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','3098973883201491',9)"><a0:img title="Show Logs Report for flowpath instance 3098973883201491" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','3098973883201491',9)"><a0:img title="Show DB Requests Report for flowpath instance 3098973883201491" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('3098973883201491')" title="View Session Time Detail for flowpath instance 3098973883201491" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('3098973883201491');" title="Show Page Dump for Session associated with flowpath instance 3098973883201491" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('3098973883201491','9');" title="Show HotSpot Thread details for flowpath instance 3098973883201491" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('3098973883201491','9');" title="Show Http Request and Response Details for flowpath instance 3098973883201491" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:30:25 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:30:25 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.185 (HH.MM.SS.ms)" class="tableCell">00:00:00.185 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId10"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2536023879660034" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2536023879660034',10)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2536023879660034" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2536023879660034',10)"><a0:img title="Show Logs Report for flowpath instance 2536023879660034" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2536023879660034',10)"><a0:img title="Show DB Requests Report for flowpath instance 2536023879660034" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2536023879660034')" title="View Session Time Detail for flowpath instance 2536023879660034" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2536023879660034');" title="Show Page Dump for Session associated with flowpath instance 2536023879660034" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2536023879660034','10');" title="Show HotSpot Thread details for flowpath instance 2536023879660034" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2536023879660034','10');" title="Show Http Request and Response Details for flowpath instance 2536023879660034" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:27:09 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:27:09 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.180 (HH.MM.SS.ms)" class="tableCell">00:00:00.180 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId11"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2817498906566895" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2817498906566895',11)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2817498906566895" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2817498906566895',11)"><a0:img title="Show Logs Report for flowpath instance 2817498906566895" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2817498906566895',11)"><a0:img title="Show DB Requests Report for flowpath instance 2817498906566895" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2817498906566895')" title="View Session Time Detail for flowpath instance 2817498906566895" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2817498906566895');" title="Show Page Dump for Session associated with flowpath instance 2817498906566895" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2817498906566895','11');" title="Show HotSpot Thread details for flowpath instance 2817498906566895" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2817498906566895','11');" title="Show Http Request and Response Details for flowpath instance 2817498906566895" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:30:25 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:30:25 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.177 (HH.MM.SS.ms)" class="tableCell">00:00:00.177 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId12"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2749077344491" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2749077344491',12)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2749077344491" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2749077344491',12)"><a0:img title="Show Logs Report for flowpath instance 2749077344491" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2749077344491',12)"><a0:img title="Show DB Requests Report for flowpath instance 2749077344491" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2749077344491')" title="View Session Time Detail for flowpath instance 2749077344491" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2749077344491');" title="Show Page Dump for Session associated with flowpath instance 2749077344491" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2749077344491','12');" title="Show HotSpot Thread details for flowpath instance 2749077344491" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2749077344491','12');" title="Show Http Request and Response Details for flowpath instance 2749077344491" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:26:22 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:26:22 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.173 (HH.MM.SS.ms)" class="tableCell">00:00:00.173 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId13"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="565699061988051" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('565699061988051',13)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 565699061988051" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','565699061988051',13)"><a0:img title="Show Logs Report for flowpath instance 565699061988051" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','565699061988051',13)"><a0:img title="Show DB Requests Report for flowpath instance 565699061988051" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('565699061988051')" title="View Session Time Detail for flowpath instance 565699061988051" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('565699061988051');" title="Show Page Dump for Session associated with flowpath instance 565699061988051" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('565699061988051','13');" title="Show HotSpot Thread details for flowpath instance 565699061988051" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('565699061988051','13');" title="Show Http Request and Response Details for flowpath instance 565699061988051" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/browse/productDetailColorSizePicker.jsp" class="tableCell"> /crs/storeus/browse/productDetailColorSizePicker.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:28:24 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:28:24 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.170 (HH.MM.SS.ms)" class="tableCell">00:00:00.170 </a0:td><a0:td nowrap="nowrap" align="right" title="284" class="tableCell">284 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId14"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2817498780524394" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2817498780524394',14)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2817498780524394" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2817498780524394',14)"><a0:img title="Show Logs Report for flowpath instance 2817498780524394" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2817498780524394',14)"><a0:img title="Show DB Requests Report for flowpath instance 2817498780524394" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2817498780524394')" title="View Session Time Detail for flowpath instance 2817498780524394" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2817498780524394');" title="Show Page Dump for Session associated with flowpath instance 2817498780524394" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2817498780524394','14');" title="Show HotSpot Thread details for flowpath instance 2817498780524394" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2817498780524394','14');" title="Show Http Request and Response Details for flowpath instance 2817498780524394" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:22:13 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:22:13 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.167 (HH.MM.SS.ms)" class="tableCell">00:00:00.167 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId15"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="284224054029782" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('284224054029782',15)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 284224054029782" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','284224054029782',15)"><a0:img title="Show Logs Report for flowpath instance 284224054029782" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','284224054029782',15)"><a0:img title="Show DB Requests Report for flowpath instance 284224054029782" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('284224054029782')" title="View Session Time Detail for flowpath instance 284224054029782" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('284224054029782');" title="Show Page Dump for Session associated with flowpath instance 284224054029782" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('284224054029782','15');" title="Show HotSpot Thread details for flowpath instance 284224054029782" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('284224054029782','15');" title="Show Http Request and Response Details for flowpath instance 284224054029782" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:26:22 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:26:22 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.167 (HH.MM.SS.ms)" class="tableCell">00:00:00.167 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId16"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="3943398748264614" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('3943398748264614',16)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 3943398748264614" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','3943398748264614',16)"><a0:img title="Show Logs Report for flowpath instance 3943398748264614" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','3943398748264614',16)"><a0:img title="Show DB Requests Report for flowpath instance 3943398748264614" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('3943398748264614')" title="View Session Time Detail for flowpath instance 3943398748264614" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('3943398748264614');" title="Show Page Dump for Session associated with flowpath instance 3943398748264614" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('3943398748264614','16');" title="Show HotSpot Thread details for flowpath instance 3943398748264614" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('3943398748264614','16');" title="Show Http Request and Response Details for flowpath instance 3943398748264614" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:26:11 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:26:11 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.167 (HH.MM.SS.ms)" class="tableCell">00:00:00.167 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId17"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="847174056716236" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('847174056716236',17)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 847174056716236" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','847174056716236',17)"><a0:img title="Show Logs Report for flowpath instance 847174056716236" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','847174056716236',17)"><a0:img title="Show DB Requests Report for flowpath instance 847174056716236" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('847174056716236')" title="View Session Time Detail for flowpath instance 847174056716236" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('847174056716236');" title="Show Page Dump for Session associated with flowpath instance 847174056716236" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('847174056716236','17');" title="Show HotSpot Thread details for flowpath instance 847174056716236" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('847174056716236','17');" title="Show Http Request and Response Details for flowpath instance 847174056716236" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:29:35 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:29:35 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.166 (HH.MM.SS.ms)" class="tableCell">00:00:00.166 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId18"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="3943398748237732" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('3943398748237732',18)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 3943398748237732" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','3943398748237732',18)"><a0:img title="Show Logs Report for flowpath instance 3943398748237732" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','3943398748237732',18)"><a0:img title="Show DB Requests Report for flowpath instance 3943398748237732" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('3943398748237732')" title="View Session Time Detail for flowpath instance 3943398748237732" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('3943398748237732');" title="Show Page Dump for Session associated with flowpath instance 3943398748237732" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('3943398748237732','18');" title="Show HotSpot Thread details for flowpath instance 3943398748237732" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('3943398748237732','18');" title="Show Http Request and Response Details for flowpath instance 3943398748237732" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:26:11 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:26:11 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.166 (HH.MM.SS.ms)" class="tableCell">00:00:00.166 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId19"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="4224873740411266" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('4224873740411266',19)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 4224873740411266" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','4224873740411266',19)"><a0:img title="Show Logs Report for flowpath instance 4224873740411266" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','4224873740411266',19)"><a0:img title="Show DB Requests Report for flowpath instance 4224873740411266" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('4224873740411266')" title="View Session Time Detail for flowpath instance 4224873740411266" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('4224873740411266');" title="Show Page Dump for Session associated with flowpath instance 4224873740411266" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('4224873740411266','19');" title="Show HotSpot Thread details for flowpath instance 4224873740411266" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('4224873740411266','19');" title="Show Http Request and Response Details for flowpath instance 4224873740411266" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/cart/cart.jsp" class="tableCell"> /crs/storeus/cart/cart.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:27:11 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:27:11 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.165 (HH.MM.SS.ms)" class="tableCell">00:00:00.165 </a0:td><a0:td nowrap="nowrap" align="right" title="249" class="tableCell">249 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId20"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="1691598952745856" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('1691598952745856',20)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 1691598952745856" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','1691598952745856',20)"><a0:img title="Show Logs Report for flowpath instance 1691598952745856" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','1691598952745856',20)"><a0:img title="Show DB Requests Report for flowpath instance 1691598952745856" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('1691598952745856')" title="View Session Time Detail for flowpath instance 1691598952745856" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('1691598952745856');" title="Show Page Dump for Session associated with flowpath instance 1691598952745856" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('1691598952745856','20');" title="Show HotSpot Thread details for flowpath instance 1691598952745856" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('1691598952745856','20');" title="Show Http Request and Response Details for flowpath instance 1691598952745856" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:27:22 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:27:22 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.165 (HH.MM.SS.ms)" class="tableCell">00:00:00.165 </a0:td><a0:td nowrap="nowrap" align="right" title="1" class="tableCell">1 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowEvenNew" id="RowId21"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="4224873790099314" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('4224873790099314',21)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 4224873790099314" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','4224873790099314',21)"><a0:img title="Show Logs Report for flowpath instance 4224873790099314" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','4224873790099314',21)"><a0:img title="Show DB Requests Report for flowpath instance 4224873790099314" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('4224873790099314')" title="View Session Time Detail for flowpath instance 4224873790099314" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('4224873790099314');" title="Show Page Dump for Session associated with flowpath instance 4224873790099314" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('4224873790099314','21');" title="Show HotSpot Thread details for flowpath instance 4224873790099314" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('4224873790099314','21');" title="Show Http Request and Response Details for flowpath instance 4224873790099314" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/storeus/browse/productDetailColorSizePicker.jsp" class="tableCell"> /crs/storeus/browse/productDetailColorSizePicker.jsp</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:30:25 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:30:25 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.165 (HH.MM.SS.ms)" class="tableCell">00:00:00.165 </a0:td><a0:td nowrap="nowrap" align="right" title="284" class="tableCell">284 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr><a0:tr onmouseover="overMouse(id)" onmouseout="outMouse(id)" class="tableRowOddNew" id="RowId22"><a0:td width="2%" nowrap="nowrap" align="left" class="tableCell" border="10"><a0:input type="checkbox" value="2749128452855" name="chkRow" id="chkFlowpath" class="smallcheckbox" /></a0:td><a0:td nowrap="nowrap" align="center" class="tableCell"><a0:a href="javascript:openSequenceDiagram('2749128452855',22)"> <a0:img style="{cursor:pointer;}" title="Show Sequence Diagram for flowpath instance 2749128452855" id="imgFlowpathReport" src="/netstorm/images/SequenceIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('log','2749128452855',22)"><a0:img title="Show Logs Report for flowpath instance 2749128452855" src="/netstorm/images/logIcon.png" /></a0:a>  <a0:a href="javascript:openLogAndQuery('query','2749128452855',22)"><a0:img title="Show DB Requests Report for flowpath instance 2749128452855" src="/netstorm/images/queryIcon.png" /></a0:a>  <a0:img style="{cursor:pointer;}" onclick="openTimingDetail('2749128452855')" title="View Session Time Detail for flowpath instance 2749128452855" id="imgQueryReport" src="/netstorm/images/timing_detail.png" />  <a0:img style="{cursor:pointer;}" onclick="showPageDump('2749128452855');" title="Show Page Dump for Session associated with flowpath instance 2749128452855" id="imgPageDump" src="/netstorm/images/imgPageDump.png" />  <a0:img style="{cursor:pointer;}" onclick="showHotSpot('2749128452855','22');" title="Show HotSpot Thread details for flowpath instance 2749128452855" id="imgHotspotId" src="/netstorm/images/hotspot.png" />  <a0:img style="{cursor:pointer;}" onclick="showHttpStatusReport('2749128452855','22');" title="Show Http Request and Response Details for flowpath instance 2749128452855" id="imgHttpReqId" src="/netstorm/images/http.png" /></a0:td><a0:td nowrap="nowrap" align="left" title="WLTier96" class="tableCell"> WLTier96</a0:td><a0:td nowrap="nowrap" align="left" title="192.168.255.2" class="tableCell"> 192.168.255.2</a0:td><a0:td nowrap="nowrap" align="left" title="atg-96" class="tableCell"> atg-96</a0:td><a0:td nowrap="nowrap" align="left" title="/crs/" class="tableCell"> /crs/</a0:td><a0:td nowrap="nowrap" align="right" title="05/05/14 12:29:42 (mm/dd/yy hh:mm:ss)" class="tableCell">05/05/14 12:29:42 </a0:td><a0:td nowrap="nowrap" align="right" title="00:00:00.165 (HH.MM.SS.ms)" class="tableCell">00:00:00.165 </a0:td><a0:td nowrap="nowrap" align="right" title="335" class="tableCell">335 </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td><a0:td nowrap="nowrap" align="right" title="-" class="tableCell">- </a0:td></a0:tr></a0:tbody><a0:tbody></a0:tbody></a0:table><a0:a name="tail"></a0:a></a0:div></a0:td></a0:tr></a0:tbody></a0:table></a0:td></a0:tr><a0:tr><a0:td><a0:table align="center"><a0:tbody><a0:tr><a0:td align="center"><a0:input type="Button" onclick="clickCompareSequenceButton();" name="Compare Sequence" value="Compare Sequence" title="Click to Compare Sequence" style="width:120;;" class="button" /></a0:td><a0:td><a0:input type="Button" onclick="clickAddToCompare();" value="Add To Compare" title="Click to add in compare list" style="width:120;" class="button" /></a0:td><a0:td><a0:input type="Button" onclick="clickViewCompare();" name="View Sequence" value="Compare List" title="Click to view/compare 0 added flowpath instances" style="width:115;" class="button" />    </a0:td></a0:tr></a0:tbody></a0:table>
+<a0:script>
+if(queryFailStatus != '1' &amp;&amp; arrDataValues.length &gt; 1)
+{
+  showDownloadBtns1('17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.pdf', '17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.xls', '17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.rtf' ,'17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.csv');
+}
+</a0:script></a0:td></a0:tr><a0:tr><a0:td><a0:table width="100%" border="0"><a0:tbody><a0:tr><a0:td width="90%"><a0:font size="1" class="textNote">   Download Report as <a0:a target="_blank" title="Right click mouse button and click Save Target As to download report" href="/netstorm/temp/17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.pdf"><a0:img border="0" src="/netstorm/images/iconPDF.gif" /></a0:a> <a0:a target="_blank" title="Right click mouse button and click Save Target As to download report" href="/netstorm/temp/17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.xls"><a0:img border="0" src="/netstorm/images/iconExcel.gif" /></a0:a> <a0:a target="_blank" title="Right click mouse button and click Save Target As to download report" href="/netstorm/temp/17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.rtf"><a0:img border="0" src="/netstorm/images/iconWord.gif" /></a0:a> <a0:a target="_blank" title="Right click mouse button and click Save Target As to download report" href="/netstorm/temp/17ECC87439EA7B9CD833C764125070BC0.40101666804959946FlowPathCompReport.jsp13.csv"><a0:img border="0" src="/netstorm/images/iconCSV.png" /></a0:a></a0:font></a0:td><a0:td width="6%" align="right">Compare List</a0:td><a0:td width="4%" align="center"> <a0:img align="left" style="{cursor:pointer;}" onclick="clickViewCompare()" title="Click to view/compare 0 added flowpath instances" id="imgFlowpathReport" src="/netstorm/images/empty.png" /> </a0:td></a0:tr></a0:tbody></a0:table></a0:td></a0:tr>
+
+</a0:tbody></a0:table>
+<a0:table width="99%" cellspacing="0" cellpadding="0" border="0"><a0:tbody><a0:tr><a0:td> </a0:td></a0:tr></a0:tbody></a0:table>
+
+
+
+
+</a0:td></a0:tr></a0:tbody></a0:table></a0:form></a0:body><a0:canvas id="fxdriver-screenshot-canvas" style="display: none;" width="1353" height="708"></a0:canvas></a0:html>
